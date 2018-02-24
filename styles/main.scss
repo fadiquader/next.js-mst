@@ -1,0 +1,15 @@
+.text-center {
+  text-align: center;
+}
+
+.container {
+  margin: 0 auto;
+  width: 80%;
+  max-width: 1200px;
+}
+
+@media screen and (max-width: 768px){
+  .container {
+    width: 90%;
+  }
+}

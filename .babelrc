@@ -1,0 +1,38 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-env": {
+          "modules": "commonjs"
+        }
+      }
+    ]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "transform-decorators-legacy",
+        [
+          "module-resolver",
+          { "root": ["./"] }
+        ],
+        "react-intl"
+      ]
+    },
+    "production": {
+      "plugins": [
+        "transform-decorators-legacy",
+        [
+          "module-resolver",
+          { "root": ["./"] }
+        ],
+
+        ["react-intl", {
+          "messagesDir": "lang/.messages/"
+        }]
+      ]
+    },
+    "ignore": ["node_modules/antd"]
+  }
+}
