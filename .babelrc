@@ -9,25 +9,27 @@
       }
     ]
   ],
+  "plugins": [
+    [
+      "module-resolver",
+      { "root": ["./"] }
+    ],
+    ["import", {
+      "libraryName": "antd",
+      "libraryDirectory": "lib",
+      "style": false
+    }],
+    "transform-decorators-legacy"
+  ],
   "env": {
     "development": {
       "plugins": [
-        "transform-decorators-legacy",
-        [
-          "module-resolver",
-          { "root": ["./"] }
-        ],
+
         "react-intl"
       ]
     },
     "production": {
       "plugins": [
-        "transform-decorators-legacy",
-        [
-          "module-resolver",
-          { "root": ["./"] }
-        ],
-
         ["react-intl", {
           "messagesDir": "lang/.messages/"
         }]

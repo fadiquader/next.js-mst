@@ -103,11 +103,11 @@ module.exports = {
     // if(!dev && isServer) {
     //   config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd' }])
     // }
-    if(!dev && !isServer) {
-      config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
-    } else if(dev && !isServer) {
-      config.module.rules[1].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
-    }
+    // if(!dev && !isServer) {
+    //   config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
+    // } else if(dev && !isServer) {
+    //   config.module.rules[1].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
+    // }
     config.module.rules.push({
       test: /\.less$/,
       use: lessUse
