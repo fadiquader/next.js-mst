@@ -36,9 +36,9 @@ export default class DefaultDocument extends Document {
     return (
       <html lang={lang}>
       <Head>
-        {!this.props.dev && (
-          <link rel="stylesheet" href={`/_next/static/style-ant.${buildId}.css`} />
-        )}
+        {/*{!this.props.dev && (*/}
+          {/*<link rel="stylesheet" href={`/_next/static/style-ant.${buildId}.css`} />*/}
+        {/*)}*/}
         {/*{this.props.styles || ''}*/}
       </Head>
       <body>
