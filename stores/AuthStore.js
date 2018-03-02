@@ -17,5 +17,10 @@ export const AuthStore = types
       self.isAuthenticated = true;
       self.token = data.token;
       self.username = data.me.username
+    },
+    signout() {
+      self.isAuthenticated = false;
+      self.token = '';
+      self.username = '';
     }
   }));

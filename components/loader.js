@@ -56,7 +56,6 @@ export default class extends React.Component {
           <style jsx global>{`
             .circle-loader {
               display: block;
-              text-center;
               padding-left: 50%;
             }
 

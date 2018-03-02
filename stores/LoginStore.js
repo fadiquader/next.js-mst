@@ -24,7 +24,7 @@ export const LoginStore = types
           password
         });
         localStorage.setItem('token', res.data.token)
-
+        // self.store.authStore.authenticate(res.data)
       } catch (err) {
         console.error("Failed to login ", err)
       }

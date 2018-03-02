@@ -42,23 +42,67 @@ export default class Authenticate {
         return {}
       })
   }
+
+  static async csrfToken() {
+    return fetch('/auth/csrf', {
+      credentials: 'same-origin'
+    })
+      .then(response => {
+        if (response.ok) {
+          return response
+        } else {
+          return Promise.reject(Error('Unexpected response when trying to get CSRF token'))
+        }
+      })
+      .then(response => response.json())
+      .then(data => data.csrfToken)
+      .catch(() => Error('Unable to get CSRF token'))
+  }
+
+  static async signout() {
+    // Signout from the server
+    // const csrfToken = await this.csrfToken()
+    // const formData = { _csrf: csrfToken }
+
+    // Encoded form parser for sending data in the body
+    // const encodedForm = Object.keys(formData).map((key) => {
+    //   return encodeURIComponent(key) + '=' + encodeURIComponent(formData[key])
+    // }).join('&')
+
+    // Remove cached session data
+    this._removeLocalStore('token');
+    // this._removeLocalStore('refreshToken');
+    return fetch('http://localhost:3000/api/signout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      // body: encodedForm,
+      credentials: 'same-origin'
+    })
+      .then(() => {
+        return true
+      })
+      .catch(() => Error('Unable to sign out'))
+  }
+
   static _getLocalStore(name) {
-    return localStorage.getItem(name) || null
-    // try {
-    //   return JSON.parse(localStorage.getItem(name))
-    // } catch (err) {
-    //   return null
-    // }
+    // return localStorage.getItem(name) || null
+    try {
+      return JSON.parse(localStorage.getItem(name))
+    } catch (err) {
+      return null
+    }
   }
 
   static _saveLocalStore(name, data) {
-    localStorage.setItem(name, data)
-    // try {
-    //   localStorage.setItem(name, JSON.stringify(data))
-    //   return true
-    // } catch (err) {
-    //   return false
-    // }
+    // localStorage.setItem(name, data)
+    try {
+      localStorage.setItem(name, JSON.stringify(data))
+      return true
+    } catch (err) {
+      return false
+    }
   }
 
   static _removeLocalStore(name) {

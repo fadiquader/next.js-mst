@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { BASE_API } from '../../utils/constatns';
+import { BASE_API, PATH_PREFIX } from '../../utils/constatns';
 
 const authController = {};
 
@@ -45,5 +45,13 @@ authController.login = async (req, res) => {
     })
   }
 };
+
+authController.signout = async (req, res) => {
+  // Log user out with Passport and remove their Express session
+  // req.logout();
+  req.session.destroy(() => {
+    return res.redirect(`${PATH_PREFIX}/callback?action=signout`)
+  })
+}
 
 export { authController };

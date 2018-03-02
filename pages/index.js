@@ -4,7 +4,7 @@ import { inject, observer } from 'mobx-react';
 import { FormattedMessage } from 'react-intl'
 import { Row, Col } from 'antd';
 
-import Page from '../components/page'
+// import Page from '../components/page'
 import Layout from '../components/Layout'
 import NProgress from '../components/NProgress'
 // import Home from '../components/Home';
@@ -14,7 +14,7 @@ import pageWithIntl from '../components/PageWithIntl';
 
 @inject('store')
 @observer
-class Home extends Page {
+class Home extends React.Component {
 
   render() {
     const { postStore, authStore } = this.props.store;

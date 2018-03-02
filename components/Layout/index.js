@@ -9,11 +9,14 @@ import Cookies from 'universal-cookie'
 // project files
 import Package from '../../package'
 import PageWithIntl from '../PageWithIntl'
+import NavBar from '../NavBar'
 // import NavBar from '../NavBar'
 
 import mainStyles from '../../styles/main.scss';
 
 import { inject, observer } from 'mobx-react'
+
+import styles from 'styles/ant.less';
 
 const { Content } = AntLayout;
 
@@ -28,8 +31,6 @@ export class Layout extends React.Component {
 
     this.onChangeLanguage = this.onChangeLanguage.bind(this)
   }
-  
-
 
   onChangeLanguage = (lang) => {
     if(window) {
@@ -47,22 +48,13 @@ export class Layout extends React.Component {
           <meta charSet="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <title>{this.props.title || 'Next.js Starter Project'}</title>
+          <style dangerouslySetInnerHTML={{ __html: styles }} />
+
           <script src="https://cdn.polyfill.io/v2/polyfill.min.js"/>
         </Head>
         <style jsx global>{mainStyles}</style>
         <AntLayout>
-          <div>
-            <ul>
-              <li>
-                <Link href="/">
-                  <a>Home</a>
-                </Link>
-                <Link href="/login">
-                  <a>Login</a>
-                </Link>
-              </li>
-            </ul>
-          </div>
+          <NavBar />
           <Content>
             {this.props.children}
           </Content>

@@ -3,7 +3,7 @@ import React from 'react'
 import { inject, observer } from 'mobx-react';
 import { Row, Col, Form, Input, Button } from 'antd';
 
-import Page from '../components/page'
+// import Page from '../components/page'
 import Layout from '../components/Layout'
 import NProgress from '../components/NProgress'
 // import Home from '../components/Home';
@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 
 @inject('store')
 @observer
-class Login extends Page {
+class Login extends React.Component {
 
   constructor() {
     super();
@@ -29,7 +29,7 @@ class Login extends Page {
   }
   _handleLogin(e) {
     e.preventDefault();
-    const { loginStore } = this.props;
+    const { loginStore } = this.props.store;
     loginStore.tryLogin(this.state)
   }
 
@@ -50,7 +50,7 @@ class Login extends Page {
           </div>
           <Row>
             <Col span={12}>
-              <Form onSubmit={this.handleLogin}>
+              <Form  method="post" action="/api/login" onSubmit={this.handleLogin}>
                 <FormItem>
                   <Input name="username" onChange={this.onInputChange} />
                 </FormItem>

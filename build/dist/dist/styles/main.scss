@@ -1,0 +1,9 @@
+"use strict";
+
+;
+
+(function () {
+  "use strict";
+
+  module.exports = ".text-center {\n  text-align: center; }\n\n.container {\n  margin: 0 auto;\n  width: 80%;\n  max-width: 1200px; }\n\n@media screen and (max-width: 768px) {\n  .container {\n    width: 90%; } }\n";
+})();
