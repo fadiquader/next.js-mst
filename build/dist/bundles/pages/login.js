@@ -67,7 +67,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -90,10 +90,6 @@ var _layout2 = _interopRequireDefault(_layout);
 var _jsxFileName = '/home/fadiqua/nextjs-starter-antd/components/Layout/index.js';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _style = __webpack_require__("styled-jsx/style");
-
-var _style2 = _interopRequireDefault(_style);
 
 var _react = __webpack_require__("react");
 
@@ -139,10 +135,6 @@ var _main2 = _interopRequireDefault(_main);
 
 var _mobxReact = __webpack_require__("mobx-react");
 
-var _ant = __webpack_require__("./styles/ant.less");
-
-var _ant2 = _interopRequireDefault(_ant);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -153,6 +145,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 // project files
 
 // import NavBar from '../NavBar'
+
+// import styles from 'styles/ant.less';
 
 var Content = _layout2.default.Content;
 
@@ -219,7 +213,7 @@ var Layout = exports.Layout = function (_React$Component) {
             },
             this.props.title || 'Next.js Starter Project'
           ),
-          _react2.default.createElement('style', { dangerouslySetInnerHTML: { __html: _ant2.default }, __source: {
+          _react2.default.createElement('style', { dangerouslySetInnerHTML: { __html: styles }, __source: {
               fileName: _jsxFileName,
               lineNumber: 51
             }
@@ -230,10 +224,6 @@ var Layout = exports.Layout = function (_React$Component) {
             }
           })
         ),
-        _react2.default.createElement(_style2.default, {
-          styleId: _main2.default.__hash,
-          css: _main2.default
-        }),
         _react2.default.createElement(
           _layout2.default,
           {
@@ -924,7 +914,7 @@ module.exports = {"name":"andreas-test","version":"5.2.0","description":"A start
 
 /***/ }),
 
-/***/ "./pages/index.js":
+/***/ "./pages/login.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -934,13 +924,33 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _row = __webpack_require__("antd/lib/row");
+
+var _row2 = _interopRequireDefault(_row);
+
+var _col = __webpack_require__("antd/lib/col");
+
+var _col2 = _interopRequireDefault(_col);
+
+var _form = __webpack_require__("antd/lib/form");
+
+var _form2 = _interopRequireDefault(_form);
+
+var _button = __webpack_require__("antd/lib/button");
+
+var _button2 = _interopRequireDefault(_button);
+
+var _input = __webpack_require__("antd/lib/input");
+
+var _input2 = _interopRequireDefault(_input);
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _dec,
     _class,
-    _jsxFileName = '/home/fadiqua/nextjs-starter-antd/pages/index.js';
+    _jsxFileName = '/home/fadiqua/nextjs-starter-antd/pages/login.js';
 
 // import Page from '../components/page'
 
@@ -957,8 +967,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var _mobxReact = __webpack_require__("mobx-react");
 
-var _reactIntl = __webpack_require__("react-intl");
-
 var _Layout = __webpack_require__("./components/Layout/index.js");
 
 var _Layout2 = _interopRequireDefault(_Layout);
@@ -973,160 +981,172 @@ var _PageWithIntl2 = _interopRequireDefault(_PageWithIntl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Home = (_dec = (0, _mobxReact.inject)('store'), _dec(_class = (0, _mobxReact.observer)(_class = function (_React$Component) {
-  _inherits(Home, _React$Component);
+var FormItem = _form2.default.Item;
 
-  function Home() {
-    _classCallCheck(this, Home);
+var Login = (_dec = (0, _mobxReact.inject)('store'), _dec(_class = (0, _mobxReact.observer)(_class = function (_React$Component) {
+  _inherits(Login, _React$Component);
 
-    return _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).apply(this, arguments));
+  function Login() {
+    _classCallCheck(this, Login);
+
+    var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this));
+
+    _this.state = {
+      username: '',
+      password: ''
+    };
+    _this.onInputChange = _this._onInputChange.bind(_this);
+    _this.handleLogin = _this._handleLogin.bind(_this);
+    return _this;
   }
 
-  _createClass(Home, [{
+  _createClass(Login, [{
+    key: 'componentWillMount',
+    value: function componentWillMount() {}
+  }, {
+    key: '_handleLogin',
+    value: function _handleLogin(e) {
+      e.preventDefault();
+      var loginStore = this.props.store.loginStore;
+
+      loginStore.tryLogin(this.state);
+    }
+  }, {
+    key: '_onInputChange',
+    value: function _onInputChange(e) {
+      this.setState(_defineProperty({}, e.target.name, e.target.value));
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _props$store = this.props.store,
-          postStore = _props$store.postStore,
-          authStore = _props$store.authStore;
+      var loginStore = this.props.store.loginStore;
 
-      if (postStore.isLoading) {
-        return _react2.default.createElement(
-          'div',
-          {
-            __source: {
-              fileName: _jsxFileName,
-              lineNumber: 22
-            }
-          },
-          'loading...'
-        );
-      }
-      // console.log('auth ', authStore)
       return _react2.default.createElement(
         _Layout2.default,
         _extends({}, this.props, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 26
+            lineNumber: 45
           }
         }),
         _react2.default.createElement(_NProgress2.default, {
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 27
+            lineNumber: 46
           }
         }),
         _react2.default.createElement(
           'div',
-          { className: 'text-light rounded-0', style: {
-              backgroundColor: 'rgba(73,155,234,1)',
-              background: 'radial-gradient(ellipse at center, rgba(73,155,234,1) 0%, rgba(32,124,229,1) 100%)',
-              boxShadow: 'inset 0 0 100px rgba(0,0,0,0.1)'
-            }, __source: {
+          { className: 'container', __source: {
               fileName: _jsxFileName,
-              lineNumber: 29
+              lineNumber: 47
             }
           },
           _react2.default.createElement(
             'div',
-            { className: 'container', __source: {
-                fileName: _jsxFileName,
-                lineNumber: 34
-              }
-            },
-            _react2.default.createElement(
-              'h1',
-              { className: 'display-2 mb-3', style: { fontWeight: 300 }, __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 35
-                }
-              },
-              _react2.default.createElement(_reactIntl.FormattedMessage, { id: 'projectName', defaultMessage: 'Starter Project', __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 36
-                }
-              })
-            ),
-            _react2.default.createElement(
-              'p',
-              { className: 'lead mb-5', __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 38
-                }
-              },
-              _react2.default.createElement(_reactIntl.FormattedMessage, { id: 'projectDescription', defaultMessage: 'A reference and template for react projects', __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 39
-                }
-              })
-            )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: 'container', __source: {
-              fileName: _jsxFileName,
-              lineNumber: 44
-            }
-          },
-          _react2.default.createElement(
-            'ol',
             {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 46
+                lineNumber: 48
               }
             },
-            postStore.posts.values().map(function (post) {
-              return _react2.default.createElement(
-                'li',
-                { key: post.id, __source: {
+            _react2.default.createElement(
+              'a',
+              { href: 'http://localhost:3000/auth/oauth/facebook', __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 49
+                }
+              },
+              'Continue with FB'
+            )
+          ),
+          _react2.default.createElement(
+            _row2.default,
+            {
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 51
+              }
+            },
+            _react2.default.createElement(
+              _col2.default,
+              { span: 12, __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 52
+                }
+              },
+              _react2.default.createElement(
+                _form2.default,
+                { method: 'post', action: '/api/login', onSubmit: this.handleLogin, __source: {
                     fileName: _jsxFileName,
-                    lineNumber: 48
+                    lineNumber: 53
                   }
                 },
                 _react2.default.createElement(
-                  'a',
+                  FormItem,
                   {
-                    href: '/post/' + post.id,
-                    onClick: function onClick(e) {
-                      e.preventDefault();
-                      return false;
-                    },
                     __source: {
                       fileName: _jsxFileName,
-                      lineNumber: 49
+                      lineNumber: 54
                     }
                   },
-                  post.title
+                  _react2.default.createElement(_input2.default, { name: 'username', onChange: this.onInputChange, __source: {
+                      fileName: _jsxFileName,
+                      lineNumber: 55
+                    }
+                  })
                 ),
                 _react2.default.createElement(
-                  'div',
+                  FormItem,
                   {
                     __source: {
+                      fileName: _jsxFileName,
+                      lineNumber: 57
+                    }
+                  },
+                  _react2.default.createElement(_input2.default, { name: 'password', onChange: this.onInputChange, __source: {
                       fileName: _jsxFileName,
                       lineNumber: 58
                     }
+                  })
+                ),
+                _react2.default.createElement(
+                  FormItem,
+                  {
+                    __source: {
+                      fileName: _jsxFileName,
+                      lineNumber: 60
+                    }
                   },
-                  post.body
+                  _react2.default.createElement(
+                    _button2.default,
+                    { htmlType: 'submit', __source: {
+                        fileName: _jsxFileName,
+                        lineNumber: 61
+                      }
+                    },
+                    'Login'
+                  )
                 )
-              );
-            })
+              )
+            )
           )
         )
       );
     }
   }]);
 
-  return Home;
+  return Login;
 }(_react2.default.Component)) || _class) || _class);
-exports.default = (0, _PageWithIntl2.default)(Home);
+exports.default = (0, _PageWithIntl2.default)(Login, 'redirect-if-auth');
 
 /***/ }),
 
@@ -1667,13 +1687,6 @@ function initStore(isServer) {
 
 /***/ }),
 
-/***/ "./styles/ant.less":
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: \n\n\n@primary-color: #b52348,\n                      ^\nDirective options not recognised\n      in /home/fadiqua/nextjs-starter-antd/styles/ant.less (line 3, column 24)");
-
-/***/ }),
-
 /***/ "./styles/main.scss":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1706,11 +1719,25 @@ throw new Error("Module build failed: \n\n\n@primary-color: #b52348,\n          
 
 /***/ }),
 
-/***/ 2:
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__("./pages/index.js");
+module.exports = __webpack_require__("./pages/login.js");
 
+
+/***/ }),
+
+/***/ "antd/lib/button":
+/***/ (function(module, exports) {
+
+module.exports = require("antd/lib/button");
+
+/***/ }),
+
+/***/ "antd/lib/col":
+/***/ (function(module, exports) {
+
+module.exports = require("antd/lib/col");
 
 /***/ }),
 
@@ -1721,10 +1748,24 @@ module.exports = require("antd/lib/dropdown");
 
 /***/ }),
 
+/***/ "antd/lib/form":
+/***/ (function(module, exports) {
+
+module.exports = require("antd/lib/form");
+
+/***/ }),
+
 /***/ "antd/lib/icon":
 /***/ (function(module, exports) {
 
 module.exports = require("antd/lib/icon");
+
+/***/ }),
+
+/***/ "antd/lib/input":
+/***/ (function(module, exports) {
+
+module.exports = require("antd/lib/input");
 
 /***/ }),
 
@@ -1746,6 +1787,13 @@ module.exports = require("antd/lib/locale-provider");
 /***/ (function(module, exports) {
 
 module.exports = require("antd/lib/menu");
+
+/***/ }),
+
+/***/ "antd/lib/row":
+/***/ (function(module, exports) {
+
+module.exports = require("antd/lib/row");
 
 /***/ }),
 
@@ -1848,4 +1896,4 @@ module.exports = require("universal-cookie");
 /***/ })
 
 /******/ });
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=login.js.map

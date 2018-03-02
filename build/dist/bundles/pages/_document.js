@@ -67,7 +67,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -106,6 +106,10 @@ var _document2 = _interopRequireDefault(_document);
 var _server = __webpack_require__("styled-jsx/server");
 
 var _server2 = _interopRequireDefault(_server);
+
+var _ant = __webpack_require__("./styles/ant.less");
+
+var _ant2 = _interopRequireDefault(_ant);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -149,33 +153,41 @@ var DefaultDocument = function (_Document) {
         'html',
         { lang: lang, __source: {
             fileName: _jsxFileName,
-            lineNumber: 38
-          }
-        },
-        _react2.default.createElement(_document.Head, {
-          __source: {
-            fileName: _jsxFileName,
             lineNumber: 39
           }
-        }),
+        },
+        _react2.default.createElement(
+          _document.Head,
+          {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 40
+            }
+          },
+          _react2.default.createElement('style', { dangerouslySetInnerHTML: { __html: _ant2.default }, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 45
+            }
+          })
+        ),
         _react2.default.createElement(
           'body',
           {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 45
+              lineNumber: 47
             }
           },
           this.props.customValue,
           _react2.default.createElement(_document.Main, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 47
+              lineNumber: 49
             }
           }),
           _react2.default.createElement('script', { src: polyfill, __source: {
               fileName: _jsxFileName,
-              lineNumber: 48
+              lineNumber: 50
             }
           }),
           _react2.default.createElement('script', {
@@ -184,13 +196,13 @@ var DefaultDocument = function (_Document) {
             },
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 49
+              lineNumber: 51
             }
           }),
           _react2.default.createElement(_document.NextScript, {
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 54
+              lineNumber: 56
             }
           })
         )
@@ -245,7 +257,14 @@ exports.default = DefaultDocument;
 
 /***/ }),
 
-/***/ 0:
+/***/ "./styles/ant.less":
+/***/ (function(module, exports) {
+
+throw new Error("Module build failed: \n\n@import \"~antd/dist/antd.less\";\n^\n'~antd/dist/antd.less' wasn't found. Tried - /home/fadiqua/nextjs-starter-antd/styles/~antd/dist/antd.less,/home/fadiqua/nextjs-starter-antd/styles/~antd/dist/antd.less,/home/fadiqua/nextjs-starter-antd/node_modules/~antd/dist/antd.less,~antd/dist/antd.less\n      in /home/fadiqua/nextjs-starter-antd/styles/ant.less (line 1, column 0)");
+
+/***/ }),
+
+/***/ 1:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__("./pages/_document.js");

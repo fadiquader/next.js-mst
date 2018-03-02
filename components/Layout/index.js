@@ -52,7 +52,7 @@ export class Layout extends React.Component {
 
           <script src="https://cdn.polyfill.io/v2/polyfill.min.js"/>
         </Head>
-        <style jsx global>{mainStyles}</style>
+        {/*<style jsx global>{mainStyles}</style>*/}
         <AntLayout>
           <NavBar />
           <Content>
