@@ -1,5 +1,8 @@
 const path = require("path");
+const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const ManifestPlugin = require('webpack-manifest-plugin');
+
 const theme = require('./theme');
 
 module.exports = {
@@ -44,6 +47,7 @@ module.exports = {
 
     let extractLESSPlugin = new ExtractTextPlugin({
       filename: 'static/style-ant.'+buildId+'.css',
+      // filename: 'static/style-ant.css',
       disable: dev
     });
 
@@ -144,6 +148,18 @@ module.exports = {
         }
       ]
     });
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': !dev ? "production" : "development",
+      })
+    )
+    if(!dev) {
+      config.plugins.push(
+        new ManifestPlugin({
+          fileName: 'asset-manifest.json',
+        })
+      );
+    }
 
     // use webpack analyzer
     //     conf.plugins.push(

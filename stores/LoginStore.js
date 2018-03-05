@@ -23,7 +23,8 @@ export const LoginStore = types
           username,
           password
         });
-        localStorage.setItem('token', res.data.token)
+        localStorage.setItem('token', res.data.token);
+        window.location.href = '/';
         // self.store.authStore.authenticate(res.data)
       } catch (err) {
         console.error("Failed to login ", err)

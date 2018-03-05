@@ -3,13 +3,14 @@ import Head from 'next/head'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
 import Authenticate from '../../services/Authenticate';
+import pageWithIntl from '../../components/PageWithIntl';
 
 import Loader from '../../components/loader'
 
-export default class extends React.Component {
+class Callback extends React.Component {
 
   static async getInitialProps({req}) {
-    const session = await Authenticate.init({force: true, req: req})
+    const session = await Authenticate.init({req: req})
 
     const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
     
@@ -35,7 +36,7 @@ export default class extends React.Component {
     // Get latest session data after rendering on client *then* redirect.
     // The ensures client state is always updated after signing in or out.
     // (That's why we use a callback page)
-    const session = await Authenticate.init({force: true})
+    const session = await Authenticate.init({force: true});
     Router.push(this.props.redirectTo || '/')
   }
 
@@ -55,3 +56,5 @@ export default class extends React.Component {
     )
   }
 }
+
+export default pageWithIntl(Callback)

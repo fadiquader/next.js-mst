@@ -14,6 +14,7 @@
     "babel-plugin-wrap-in-js": "^1.1.1",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-beta.3",
     "css-loader": "^0.28.9",
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
@@ -72,6 +73,7 @@
     "styled-jsx-plugin-sass": "^0.2.3",
     "webpack": "3.10.0",
     "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-manifest-plugin": "^2.0.0-rc.2",
     "xo": "^0.18.2"
   },
   "optionalDependencies": {

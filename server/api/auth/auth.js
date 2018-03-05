@@ -49,9 +49,12 @@ authController.login = async (req, res) => {
 authController.signout = async (req, res) => {
   // Log user out with Passport and remove their Express session
   // req.logout();
-  req.session.destroy(() => {
-    return res.redirect(`${PATH_PREFIX}/callback?action=signout`)
-  })
+  // req.session.destroy(() => {
+  //   return res.redirect(`${PATH_PREFIX}/callback?action=signout`)
+  // })
+  req.session = null;
+  return res.redirect(`${PATH_PREFIX}/callback?action=signout`)
+
 }
 
 export { authController };

@@ -1,7 +1,6 @@
 import Document, { Head, Main, NextScript } from 'next/document'
 import flush from "styled-jsx/server";
 
-const isProd = process.env.NODE_ENV === 'production';
 
 export default class DefaultDocument extends Document {
   static async getInitialProps (context) {
@@ -10,6 +9,7 @@ export default class DefaultDocument extends Document {
     const { html, head, errorHtml, chunks } = context.renderPage();
     const {req: {locale, localeDataScript}} = context;
     const styles = flush();
+    // console.log('props ', props);
 
     return {
       ...props,
@@ -36,9 +36,9 @@ export default class DefaultDocument extends Document {
     return (
       <html lang={lang}>
       <Head>
-        {!this.props.dev && (
-          <link rel="stylesheet" href={`/_next/static/style-ant.${buildId}.css`} />
-        )}
+        {/*{!this.props.dev && (*/}
+          {/*<link rel="stylesheet" href={`/_next/static/style-ant.${buildId}.css`} />*/}
+        {/*)}*/}
         {/*{this.props.styles || ''}*/}
       </Head>
       <body>

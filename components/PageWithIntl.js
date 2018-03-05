@@ -38,15 +38,17 @@ export default (Page, authStatus='no-auth-required') => {
       let session = await Authenticate.init({
         req: req, force: true
       });
-
       const store = initStore(isServer);
-
       if(session.token) {
         store.authStore.authenticate(session)
       }
       let redirect = authStatus === 'auth-required' && !session.token ?
         '/login' : authStatus === 'redirect-if-auth' && session.token ?
           '/' : null;
+      if (query.redirect) {
+        const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
+        cookies.set('redirect_url', query.redirect, { path: '/' })
+      }
       if(redirect !== null) {
         if (isServer && res) {
           res.writeHead(302, { Location: redirect })
@@ -56,10 +58,7 @@ export default (Page, authStatus='no-auth-required') => {
         }
       }
 
-      if (query.redirect) {
-        const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
-        cookies.set('redirect_url', query.redirect, { path: '/' })
-      }
+
 
       return {...props, isServer, session, initialState: getSnapshot(store)}
     }

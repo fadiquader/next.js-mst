@@ -1,6 +1,7 @@
 'use strict';
 import express from 'express';
 import expressSession from 'express-session';
+import cookieSession from 'cookie-session';
 import bodyParser from 'body-parser';
 import { parse } from 'url';
 
@@ -50,19 +51,24 @@ nextApp
     const expressApp = express();
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: true }));
-    expressApp.use(expressSession({
-      secret: 'fadi',
-      store: sessionStore,
-      resave: false,
-      rolling: true,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true,
-        secure: 'auto',
-        maxAge: 60000 * 60 * 24 * 7
-      }
-    }));
-
+    // expressApp.use(expressSession({
+    //   secret: 'fadi',
+    //   store: sessionStore,
+    //   resave: false,
+    //   rolling: true,
+    //   saveUninitialized: false,
+    //   cookie: {
+    //     httpOnly: true,
+    //     secure: 'auto',
+    //     maxAge: 60000 * 60 * 24 * 7
+    //   }
+    // }));
+    expressApp.use(cookieSession({
+      name: 'session',
+      keys: ['fadi'],
+      // Cookie Options
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }))
     expressApp.use(addLanguage);
     // expressApp.use(addUser);
     expressApp.use('/api', apis);

@@ -26,7 +26,8 @@ class NavBar extends Component {
     cookies.set('redirect_url', window.location.pathname, { path: '/' });
     await Authenticate.signout();
     authStore.signout();
-    Router.push('/')
+    // Router.push('/')
+    window.location.href = '/'
   }
 
   render() {

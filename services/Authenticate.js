@@ -3,6 +3,10 @@ import axios from 'axios';
 
 export default class Authenticate {
   static init({ req, force }) {
+    if(force) {
+      this._removeLocalStore('token')
+      // this._removeLocalStore('refreshToken')
+    }
     if(req) {
       if(req.session && req.session.token) {
         const { token, refreshToken } = req.session;
