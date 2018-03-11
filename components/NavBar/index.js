@@ -32,7 +32,7 @@ class NavBar extends Component {
 
   render() {
     const { authStore } = this.props.store;
-    console.log('token ', this.props.store.authStore.token)
+    // console.log('token ', this.props.store.authStore.token)
     const navigateMenu = (
       <Menu>
         <Menu.Item>

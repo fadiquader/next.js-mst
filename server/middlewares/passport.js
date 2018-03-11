@@ -1,37 +1,64 @@
 import passport from 'passport';
 import FacebookStrategy from 'passport-facebook';
+import LocalStrategy from'passport-local';
+
 import axios from 'axios';
 import { BASE_URL, BASE_API, DEV_URL, PATH_PREFIX } from '../utils/constatns';
 
 // require('dotenv').load()
 
-export default (expressApp) => {
-  passport.use(new FacebookStrategy({
-    clientID: '158671718005040',
-    clientSecret: 'd77d4d987465ffe867cebaea592f57b2',
-    passReqToCallback: true,
-    callbackURL: 'http://localhost:3000/auth/oauth/facebook/callback',
-    profileFields: ['id', 'displayName', 'email', 'link']
-  }, async (req, accessToken, refreshToken, _profile, next) => {
-    try {
-      const { id, displayName } = _profile;
-      console.log('fb profile ', _profile)
-      const result = await axios.post(`${BASE_API}login`, { displayName, password: '123' });
-      req.session.token = result.data.token;
-      req.user = result.data.user;
-      next(null, _profile)
-    } catch (err) {
-      next(err, false)
-    }
-  }));
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 
-  expressApp.get('/auth/oauth/facebook', passport.authenticate('facebook'));
-  expressApp.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: `${PATH_PREFIX}/callback?action=signin&service=facebook`,
-    failureRedirect: `${PATH_PREFIX}/error?action=signin&type=oauth&service=facebook`,
-    session: false
-  }))
-}
+passport.deserializeUser( async (id, done) => {
+  try {
+    const res = await axios.get(`${BASE_API}user/1`);
+    done(null, res.data.user);
+  } catch (err) {
+    console.log('Err deserializeUser: ', err.message)
+    done(err, false);
+  }
+});
+
+const facebookStrategy = new FacebookStrategy({
+  clientID: '158671718005040',
+  clientSecret: 'd77d4d987465ffe867cebaea592f57b2',
+  passReqToCallback: true,
+  callbackURL: 'http://localhost:3000/auth/oauth/facebook/callback',
+  profileFields: ['id', 'displayName', 'email', 'link']
+}, async (req, accessToken, refreshToken, _profile, next) => {
+  try {
+    const { id, displayName } = _profile;
+    console.log('fb profile ', _profile)
+    const result = await axios.post(`${BASE_API}login`, { displayName, password: '123' });
+    req.session.token = result.data.token;
+    req.user = result.data.user;
+    next(null, _profile)
+  } catch (err) {
+    next(err, fa,mlse)
+  }
+})
+const localOptions = { usernameField: 'username' };
+// const localLogin = new LocalStrategy({
+//   usernameField: 'username',
+//   passwordField : 'password',
+//   passReqToCallback : true
+// }, (req, username, password, done) => {
+//   process.nextTick(function() {
+//     axios.post(`${BASE_API}login`, { email: 'fadiqua', password: '123' })
+//       .then(res => {
+//         req.session.token = res.data.token
+//         done(null, res.data.me)
+//       })
+//       .catch(err => {
+//         return done(err, false);
+//       })
+//   })
+// });
+
+// passport.use('local-login', localLogin);
+passport.use(facebookStrategy);
 
 // export const providers = [
 //   {

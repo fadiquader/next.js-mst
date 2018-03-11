@@ -7,7 +7,8 @@ const authController = {};
 authController.me = async (req, res) => {
   try {
     const token = req.headers['x-token'] || req.session.token;
-    // console.log('token server', token)
+    console.log('token server', token)
+    console.log('token session', req.session.token)
     const result = await axios.get(`${BASE_API}me`, {
       headers: {
         common: {
@@ -15,8 +16,8 @@ authController.me = async (req, res) => {
         }
       }
     });
-    req.user = result.data.me;
-    res.status(200).json({
+    // req.user = result.data.me;
+    res.json({
       success: true,
       token,
       me: result.data.me
@@ -30,25 +31,38 @@ authController.me = async (req, res) => {
 
 authController.login = async (req, res) => {
   const { username, password } = req.body;
-  try {
-    console.log('username server ', username)
-    const result = await axios.post(`${BASE_API}login`, { username, password });
-    req.session.token = result.data.token;
-    req.user = result.data.user;
-    res.status(200).json({
-      token: result.data.token,
-      user: result.data.user
+  console.log('username server ', username)
+  axios.post(`${BASE_API}login`, { username, password })
+    .then(result => {
+      req.logIn(result.data.user, err => {
+        if(err) {
+          console.log('Error Passport Login: ', err.message)
+        }
+        req.session.token = result.data.token
+        // return res.redirect(`${PATH_PREFIX}/callback?action=signin&service=credentials`)
+        return res.json({
+          success: true,
+          token: result.data.token,
+          user: result.data.user
+        })
+      })
     })
-  } catch (err) {
-    res.status(401).json({
-      success: false
-    })
-  }
+    .catch(err => {
+      res.status(401).json({
+        success: false
+      })
+    });
+
+  // try {
+  //   // return res.redirect(`${PATH_PREFIX}/callback?action=unlink&service=signin}`)
+  //
+  // }
+
 };
 
 authController.signout = async (req, res) => {
   // Log user out with Passport and remove their Express session
-  // req.logout();
+  req.logout();
   // req.session.destroy(() => {
   //   return res.redirect(`${PATH_PREFIX}/callback?action=signout`)
   // })

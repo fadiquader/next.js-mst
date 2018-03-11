@@ -3,10 +3,11 @@ import express from 'express';
 import expressSession from 'express-session';
 import cookieSession from 'cookie-session';
 import bodyParser from 'body-parser';
+import passport from 'passport';
 import { parse } from 'url';
 
 import apis from './api';
-import passportInit from './middlewares/passport'
+
 const mobxReact = require('mobx-react');
 
 const IntlPolyfill = require('intl')
@@ -22,7 +23,7 @@ Intl.DateTimeFormat = IntlPolyfill.DateTimeFormat
 
 // Load environment variables from .env file if present
 require('dotenv').load()
-
+require('./middlewares/passport');
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 process.env.PORT = process.env.PORT || 80
 
@@ -68,11 +69,19 @@ nextApp
       keys: ['fadi'],
       // Cookie Options
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }))
+    }));
+    expressApp.use(passport.initialize());
+    expressApp.use(passport.session());
     expressApp.use(addLanguage);
     // expressApp.use(addUser);
+    expressApp.get('/auth/oauth/facebook', passport.authenticate('facebook'));
+    expressApp.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
+      successRedirect: `${'/auth'}/callback?action=signin&service=facebook`,
+      failureRedirect: `${'/auth'}/error?action=signin&type=oauth&service=facebook`,
+      // session: false
+    }))
     expressApp.use('/api', apis);
-    passportInit(expressApp)
+
     expressApp.get('*', (req, res) => {
       const parsedUrl = parse(req.url, true);
       return handle(req, res, parsedUrl)

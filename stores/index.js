@@ -24,7 +24,7 @@ export const Store = types
   }))
   .actions(self => ({
     afterCreate() {
-      self.postStore.loadPosts()
+      // self.postStore.loadPosts()
     }
   }));
 

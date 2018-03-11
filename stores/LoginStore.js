@@ -18,13 +18,13 @@ export const LoginStore = types
     },
     tryLogin: flow(function* login({ username, password }) {
       try {
-        console.log('username ', username, 'password ', password)
+        console.log('username ', username, 'password ', password);
         const res = yield axios.post("/api/login", {
           username,
           password
         });
         localStorage.setItem('token', res.data.token);
-        window.location.href = '/';
+        window.location.href = '/auth/callback?action=signin&service=credentials';
         // self.store.authStore.authenticate(res.data)
       } catch (err) {
         console.error("Failed to login ", err)

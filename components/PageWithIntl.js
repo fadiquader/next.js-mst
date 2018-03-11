@@ -33,23 +33,27 @@ export default (Page, authStatus='no-auth-required') => {
       }
       // Get the `locale` and `messages` from the request object on the server.
       // In the browser, use the same values that the server serialized.
-      const { req, res, query } = context;
+      const { req, res, pathname, query } = context;
       const isServer = !!req;
       let session = await Authenticate.init({
         req: req, force: true
       });
+      const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null);
       const store = initStore(isServer);
       if(session.token) {
         store.authStore.authenticate(session)
       }
+      console.log('session.token:  ', session.token)
       let redirect = authStatus === 'auth-required' && !session.token ?
         '/login' : authStatus === 'redirect-if-auth' && session.token ?
           '/' : null;
-      if (query.redirect) {
-        const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
-        cookies.set('redirect_url', query.redirect, { path: '/' })
+
+      if(redirect === '/login') {
+        const redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
+        redirect = redirect + '?redirect='+redirectUrl;
+        cookies.set('redirect_url', redirectUrl, { path: '/' })
       }
-      if(redirect !== null) {
+      if(redirect !== null && authStatus !== 'callback') {
         if (isServer && res) {
           res.writeHead(302, { Location: redirect })
           res.end()
@@ -58,14 +62,25 @@ export default (Page, authStatus='no-auth-required') => {
         }
       }
 
+      if(authStatus === 'callback') {
+        redirect = redirect !== null ? redirect : cookies.get('redirect_url') || '/'
+      }
 
-
-      return {...props, isServer, session, initialState: getSnapshot(store)}
+      return {...props, isServer, session, initialState: getSnapshot(store), redirect, authStatus}
     }
 
     constructor (props) {
       super(props)
       this.store = initStore(props.isServer, props.initialState)
+    }
+
+    componentDidMount() {
+      const { redirect, authStatus } = this.props;
+      console.log(redirect, authStatus)
+      if(redirect && authStatus === 'callback') {
+        Router.replace(redirect)
+
+      }
     }
 
     render () {

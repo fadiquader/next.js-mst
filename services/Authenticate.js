@@ -1,12 +1,8 @@
 import fetch from 'isomorphic-fetch'
-import axios from 'axios';
+// import axios from 'axios';
 
 export default class Authenticate {
   static init({ req, force }) {
-    if(force) {
-      this._removeLocalStore('token')
-      // this._removeLocalStore('refreshToken')
-    }
     if(req) {
       if(req.session && req.session.token) {
         const { token, refreshToken } = req.session;
@@ -17,14 +13,14 @@ export default class Authenticate {
       })
     }
     else if(typeof window !== 'undefined') {
+      // if(force) {
+      //   this._removeLocalStore('token')
+      // }
       const token = this._getLocalStore('token');
+      // const token = localStorage.getItem('token');
+      console.log('Auth: ', token)
       const refreshToken = this._getLocalStore('refreshToken');
-      if(token) {
-        return this._getUserData(token);
-      }
-      return new Promise((resolve) => {
-        resolve({})
-      })
+      return this._getUserData(token || null);
     }
   }
   static _getUserData(token, refreshToken) {
@@ -91,9 +87,8 @@ export default class Authenticate {
   }
 
   static _getLocalStore(name) {
-    // return localStorage.getItem(name) || null
     try {
-      return JSON.parse(localStorage.getItem(name))
+      return localStorage.getItem(name)
     } catch (err) {
       return null
     }
