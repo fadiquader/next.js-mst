@@ -34,46 +34,48 @@ socialAuthSchema.statics.findOrCreate = function (network, data) {
   return new Promise(async (resolve, reject) => {
     try {
       const user = await this.findOne({ provider: network, providerId: data.id });
+      console.log('user user ', user)
+
       if (!user) {
         socialObj.providerId = data.id;
         socialObj.provider = network;
-        const firstName = data.first_name ? data.first_name.toLowerCase() : 'f';
-        const lastName = data.last_name ? data.last_name.toLowerCase() : 'l';
+        const firstName = data.first_name ? data.first_name.toLowerCase() : 'unkn';
+        const lastName = data.last_name ? data.last_name.toLowerCase() : 'use';
         const username = await UserModel.generateUniqueUserName({ firstName, lastName });
         userObj.username = username;
         userObj.firstName = firstName;
         userObj.lastName = lastName;
         userObj.email = data.email || null;
         userObj.thumbnail = null;
-        if (data.thumbnail) {
-          const thumbnailName = `thumb-50-${fileUniqueName()}.jpg`;
-          const { filename, image } = await download.image({
-            url: data.thumbnail,
-            dest: `${thumbsDir}/${thumbnailName}`,
-          });
-          userObj.thumbnail = thumbnailName;
-        }
-        // userObj['thumbnail'] = data.thumbnail;
-        if (network === 'facebook') {
-          const pictureName = `fb-${fileUniqueName()}.jpg`;
-          if (data.picture) {
-            const { filename, image } = await download.image({
-              url: `${data.picture}?type=large`,
-              dest: `${filesDir}/${pictureName}`,
-            });
-            userObj.picture = pictureName;
-          }
-        }
-        if (network === 'google') {
-          const pictureName = `g-${fileUniqueName()}.jpg`;
-          if (data.picture) {
-            const { filename, image } = await download.image({
-              url: data.picture.split('?sz=')[0],
-              dest: `${filesDir}/${pictureName}`,
-            });
-            userObj.picture = pictureName;
-          }
-        }
+        // if (data.thumbnail) {
+        //   const thumbnailName = `thumb-50-${fileUniqueName()}.jpg`;
+        //   const { filename, image } = await download.image({
+        //     url: data.thumbnail,
+        //     dest: `${thumbsDir}/${thumbnailName}`,
+        //   });
+        //   userObj.thumbnail = thumbnailName;
+        // }
+
+        // if (network === 'facebook') {
+        //   const pictureName = `fb-${fileUniqueName()}.jpg`;
+        //   if (data.picture) {
+        //     const { filename, image } = await download.image({
+        //       url: `${data.picture}?type=large`,
+        //       dest: `${filesDir}/${pictureName}`,
+        //     });
+        //     userObj.picture = pictureName;
+        //   }
+        // }
+        // if (network === 'google') {
+        //   const pictureName = `g-${fileUniqueName()}.jpg`;
+        //   if (data.picture) {
+        //     const { filename, image } = await download.image({
+        //       url: data.picture.split('?sz=')[0],
+        //       dest: `${filesDir}/${pictureName}`,
+        //     });
+        //     userObj.picture = pictureName;
+        //   }
+        // }
         const newUser = await userObj.save();
         socialObj.user = newUser._id;
         await socialObj.save();

@@ -6,6 +6,8 @@ import bodyParser from 'body-parser';
 import { parse } from 'url';
 import passport from 'passport'
 import lusca from 'lusca'
+import mongoose from 'mongoose'
+// project files
 import apis from './api';
 import routes from './routes';
 
@@ -16,6 +18,8 @@ const next = require('next');
 
 const { addLanguage } = require('./middlewares/addLanguage')
 const { addUser } = require('./middlewares/addUser')
+
+mongoose.Promise = global.Promise;
 
 mobxReact.useStaticRendering(true);
 
@@ -44,7 +48,19 @@ const sessionStore = new MongoStore({
   autoRemoveInterval: 10, // Removes expired sessions every 10 minutes
   collection: 'sessions',
   stringify: false
-})
+});
+
+const mongooseConnection = mongoose.connect(process.env.MONGO_URI, {
+  autoIndex: false, // Don't build indexes
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0
+});
+
+// const mongooseConnction = mongoose.connection;
+
 // Add next-auth to next app
 nextApp
   .prepare()
@@ -90,12 +106,19 @@ nextApp
       const parsedUrl = parse(req.url, true);
       return handle(req, res, parsedUrl)
     })
-    expressApp.listen(process.env.PORT, err => {
-      if (err) {
-        throw err
-      }
-      console.log('> Ready on http://localhost:' + process.env.PORT + ' [' + process.env.NODE_ENV + ']')
-    })
+    mongooseConnection
+      .then(
+        () => {
+          console.log('Mongoose connected to ');
+          expressApp.listen(process.env.PORT, err => {
+            if (err)  throw err
+            console.log('> Ready on http://localhost:' + process.env.PORT + ' [' + process.env.NODE_ENV + ']')
+          })
+        },
+        (err) => {
+          console.log(`Mongoose connection error: ${err}`);
+        }
+      )
   })
   .catch(err => {
     console.log('An error occurred, unable to start the server')

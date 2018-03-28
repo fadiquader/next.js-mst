@@ -48,6 +48,9 @@ class Login extends React.Component {
           <div>
             <a href="http://localhost:3000/auth/oauth/facebook">Continue with FB</a>
           </div>
+          <div>
+            <a href="http://localhost:3000/auth/oauth/google">Continue with Google</a>
+          </div>
           <Row>
             <Col span={12}>
               <Form  method="post" action="/api/login" onSubmit={this.handleLogin}>

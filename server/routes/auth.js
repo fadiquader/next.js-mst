@@ -36,9 +36,21 @@ router.get(`${pathPrefix}/session`, (req, res) => {
 
   return res.json(session)
 })
+router.get('/auth/oauth/facebook', passport.authenticate('facebook', {
+  scope: ['public_profile', 'email']
+}))
+
 router.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
   successRedirect: `/auth/callback?action=signin&service=facebook`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=facebook`
+}))
+router.get('/auth/oauth/google', passport.authenticate('google', {
+  scope: ['profile', 'email']
+}))
+
+router.get('/auth/oauth/google/callback', passport.authenticate('google', {
+  successRedirect: `/auth/callback?action=signin&service=google`,
+  failureRedirect: `/auth/error?action=signin&type=oauth&service=google`
 }))
 
 router.post(`${pathPrefix}/signout`, (req, res) => {

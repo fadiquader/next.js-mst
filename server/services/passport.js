@@ -12,23 +12,19 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser( async (id, done) => {
-  User.findById(id).then(user => {
+passport.deserializeUser((id, done) => {
+  db.User.findById(id).then(user => {
     done(null, user);
-  });
-  try {
-    const user = await db.User.findById(id)
-    done(null, user);
-  } catch (err) {
-    console.log('Err deserializeUser: ', err.message)
-    done(err, false);
-  }
+  }).catch(err => {
+      done(err, false);
+    })
+
 });
 
 const facebookStrategy = new FacebookStrategy({
   clientID: '158671718005040',
   clientSecret: 'd77d4d987465ffe867cebaea592f57b2',
-  // passReqToCallback: true,
+  passReqToCallback: true,
   callbackURL: 'http://localhost:3000/auth/oauth/facebook/callback',
   profileFields: ['id', 'displayName', 'email', 'link'],
   scope: [
@@ -37,12 +33,19 @@ const facebookStrategy = new FacebookStrategy({
   ],
   proxy: true
 }, async (req, accessToken, refreshToken, profile, done) => {
+  // db.SocialAuth.findOrCreate('facebook', profile)
+  //   .then(user => {
+  //     console.log('userrr ', user)
+  //     return done(null, user)
+  //   })
+  //   .catch(err => {
+  //     return done(err, false)
+  //   })
   try {
-    console.log('profile ', profile)
-    // const { id, displayName } = _profile;
-    // providerId: profile.id,
-    //   provider: 'facebook'
+
     const user = await db.SocialAuth.findOrCreate('facebook', profile)
+    console.log('userrr ', user)
+
     return done(null, user)
   } catch (err) {
     return done(err, false)
@@ -55,20 +58,18 @@ const googleStrategy = new GoogleStrategy({
     callbackURL: 'http://localhost:3000/auth/oauth/google/callback',
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
-    proxy: true
+    passReqToCallback: true,
+    // proxy: true
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const existingUser = await db.SocialAuth.findOne({
-          providerId: profile.id,
-          provider: 'google',
-        });
-        if (existingUser) {
-          return done(null, {});
-        }
-        done(null, {});
+        console.log('profile ', profile.id)
+        const user = await db.SocialAuth.findOrCreate( 'google', profile);
+        console.log('userrr ', user)
+
+        return done(null, user);
       } catch (err) {
-        done(err, null);
+        return done(err, null);
       }
     }
 )
