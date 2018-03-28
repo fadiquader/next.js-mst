@@ -23,7 +23,7 @@ Intl.DateTimeFormat = IntlPolyfill.DateTimeFormat
 
 // Load environment variables from .env file if present
 require('dotenv').load()
-require('./middlewares/passport');
+require('./services/passport');
 process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 process.env.PORT = process.env.PORT || 80
 
