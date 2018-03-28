@@ -1,10 +1,11 @@
 import passport from 'passport';
 import FacebookStrategy from 'passport-facebook';
+import GoogleStrategy from 'passport-google-oauth20';
 import LocalStrategy from'passport-local';
 
 import axios from 'axios';
 import { BASE_URL, BASE_API, DEV_URL, PATH_PREFIX } from '../utils/constatns';
-
+import db  from '../models';
 // require('dotenv').load()
 
 passport.serializeUser((user, done) => {
@@ -12,9 +13,12 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser( async (id, done) => {
+  User.findById(id).then(user => {
+    done(null, user);
+  });
   try {
-    const res = await axios.get(`${BASE_API}user/1`);
-    done(null, res.data.user);
+    const user = await db.User.findById(id)
+    done(null, user);
   } catch (err) {
     console.log('Err deserializeUser: ', err.message)
     done(err, false);
@@ -24,21 +28,53 @@ passport.deserializeUser( async (id, done) => {
 const facebookStrategy = new FacebookStrategy({
   clientID: '158671718005040',
   clientSecret: 'd77d4d987465ffe867cebaea592f57b2',
-  passReqToCallback: true,
+  // passReqToCallback: true,
   callbackURL: 'http://localhost:3000/auth/oauth/facebook/callback',
-  profileFields: ['id', 'displayName', 'email', 'link']
-}, async (req, accessToken, refreshToken, _profile, next) => {
+  profileFields: ['id', 'displayName', 'email', 'link'],
+  scope: [
+    'public_profile',
+    'email'
+  ],
+  proxy: true
+}, async (req, accessToken, refreshToken, profile, done) => {
   try {
-    const { id, displayName } = _profile;
-    console.log('fb profile ', _profile)
-    const result = await axios.post(`${BASE_API}login`, { displayName, password: '123' });
-    req.session.token = result.data.token;
-    req.user = result.data.user;
-    next(null, _profile)
+    console.log('profile ', profile)
+    // const { id, displayName } = _profile;
+    // providerId: profile.id,
+    //   provider: 'facebook'
+    const user = await db.SocialAuth.findOrCreate('facebook', profile)
+    return done(null, user)
   } catch (err) {
-    next(err, fa,mlse)
+    return done(err, false)
   }
-})
+});
+
+passport.use(facebookStrategy);
+
+const googleStrategy = new GoogleStrategy({
+    callbackURL: 'http://localhost:3000/auth/oauth/google/callback',
+    clientID: process.env.GOOGLE_ID,
+    clientSecret: process.env.GOOGLE_SECRET,
+    proxy: true
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        const existingUser = await db.SocialAuth.findOne({
+          providerId: profile.id,
+          provider: 'google',
+        });
+        if (existingUser) {
+          return done(null, {});
+        }
+        done(null, {});
+      } catch (err) {
+        done(err, null);
+      }
+    }
+)
+
+passport.use(googleStrategy);
+
 const localOptions = { usernameField: 'username' };
 // const localLogin = new LocalStrategy({
 //   usernameField: 'username',
@@ -58,7 +94,7 @@ const localOptions = { usernameField: 'username' };
 // });
 
 // passport.use('local-login', localLogin);
-passport.use(facebookStrategy);
+
 
 // export const providers = [
 //   {

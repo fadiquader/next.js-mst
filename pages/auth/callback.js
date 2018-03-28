@@ -10,7 +10,7 @@ import Loader from '../../components/loader'
 class Callback extends React.Component {
 
   // static async getInitialProps({req}) {
-  //   const session = await Authenticate.init({req: req})
+  //   const session = await Authenticate.init({req: req, force: true })
   //
   //   const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null)
   //

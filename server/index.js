@@ -3,10 +3,11 @@ import express from 'express';
 import expressSession from 'express-session';
 import cookieSession from 'cookie-session';
 import bodyParser from 'body-parser';
-import passport from 'passport';
 import { parse } from 'url';
-
+import passport from 'passport'
+import lusca from 'lusca'
 import apis from './api';
+import routes from './routes';
 
 const mobxReact = require('mobx-react');
 
@@ -37,7 +38,6 @@ const handle = nextApp.getRequestHandler()
 
 const MongoStore = require('connect-mongo')(expressSession);
 
-
 const sessionStore = new MongoStore({
   url: process.env.MONGO_URI,
   autoRemove: 'interval',
@@ -50,28 +50,32 @@ nextApp
   .prepare()
   .then(() => {
     const expressApp = express();
+
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: true }));
-    // expressApp.use(expressSession({
-    //   secret: 'fadi',
-    //   store: sessionStore,
-    //   resave: false,
-    //   rolling: true,
-    //   saveUninitialized: false,
-    //   cookie: {
-    //     httpOnly: true,
-    //     secure: 'auto',
-    //     maxAge: 60000 * 60 * 24 * 7
-    //   }
-    // }));
-    expressApp.use(cookieSession({
-      name: 'session',
-      keys: ['fadi'],
-      // Cookie Options
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    expressApp.use(expressSession({
+      secret: 'fadi',
+      store: sessionStore,
+      resave: false,
+      rolling: true,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        secure: 'auto',
+        maxAge: 60000 * 60 * 24 * 7
+      }
     }));
+    // expressApp.use(cookieSession({
+    //   name: 'session',
+    //   keys: ['fadi'],
+    //   // Cookie Options
+    //   maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    // }));
     expressApp.use(passport.initialize());
     expressApp.use(passport.session());
+    expressApp.use(lusca.csrf());
+    expressApp.set('trust proxy', 1);
+
     expressApp.use(addLanguage);
     // expressApp.use(addUser);
     expressApp.get('/auth/oauth/facebook', passport.authenticate('facebook'));
@@ -80,8 +84,8 @@ nextApp
       failureRedirect: `${'/auth'}/error?action=signin&type=oauth&service=facebook`,
       // session: false
     }))
-    expressApp.use('/api', apis);
-
+    // expressApp.use('/api', apis);
+    routes(expressApp)
     expressApp.get('*', (req, res) => {
       const parsedUrl = parse(req.url, true);
       return handle(req, res, parsedUrl)

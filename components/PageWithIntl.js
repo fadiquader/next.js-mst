@@ -43,7 +43,7 @@ export default (Page, authStatus='no-auth-required') => {
       if(session.token) {
         store.authStore.authenticate(session)
       }
-      console.log('session.token:  ', session.token)
+      // console.log('session.token:  ', session.token)
       let redirect = authStatus === 'auth-required' && !session.token ?
         '/login' : authStatus === 'redirect-if-auth' && session.token ?
           '/' : null;

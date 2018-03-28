@@ -27,7 +27,7 @@ class NavBar extends Component {
     await Authenticate.signout();
     authStore.signout();
     // Router.push('/')
-    window.location.href = '/'
+    // window.location.href = '/'
   }
 
   render() {
@@ -71,13 +71,14 @@ class NavBar extends Component {
               </a>
             </Dropdown>
           </Menu.Item>
-          { authStore.isAuthenticated &&
           <Menu.Item key="logout">
-              <a onClick={this.handleSignoutSubmit}>
-                logout
-              </a>
+            <a onClick={this.handleSignoutSubmit}>
+              logout
+            </a>
           </Menu.Item>
-          }
+          {/*{ authStore.isAuthenticated &&*/}
+
+          {/*}*/}
         </Menu>
         <style jsx>{styles}</style>
       </Header>
