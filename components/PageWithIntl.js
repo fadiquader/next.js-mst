@@ -35,17 +35,22 @@ export default (Page, authStatus='no-auth-required') => {
       // In the browser, use the same values that the server serialized.
       const { req, res, pathname, query } = context;
       const isServer = !!req;
+
       let session = await Authenticate.init({
-        req: req, force: true
+        req: req,
       });
+
       const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null);
+      const loc = cookies.get('locale')
+      if(!loc) cookies.set('locale', 'en', {})
       const store = initStore(isServer);
-      if(session.token) {
+      const isAuthintaced = session.user
+      if(isAuthintaced) {
         store.authStore.authenticate(session)
       }
       // console.log('session.token:  ', session.token)
-      let redirect = authStatus === 'auth-required' && !session.token ?
-        '/login' : authStatus === 'redirect-if-auth' && session.token ?
+      let redirect = authStatus === 'auth-required' && !isAuthintaced ?
+        '/login' : authStatus === 'redirect-if-auth' && isAuthintaced ?
           '/' : null;
 
       if(redirect === '/login') {
@@ -65,30 +70,42 @@ export default (Page, authStatus='no-auth-required') => {
       if(authStatus === 'callback') {
         redirect = redirect !== null ? redirect : cookies.get('redirect_url') || '/'
       }
+      const { locale, messages, antdLocale } = req || window.__NEXT_DATA__.props
 
-      return {...props, isServer, session, initialState: getSnapshot(store), redirect, authStatus}
+      // const { locale, antdLocale, messages } = session.lang
+      // console.log('page with intl: ', locale)
+      return {
+        ...props, isServer, session,
+        initialState: getSnapshot(store), redirect, authStatus,
+        locale,
+        antdLocale,
+        messages
+      }
     }
 
     constructor (props) {
       super(props)
+      const {locale, messages, antdLocale } = props
+      this.state = {
+        locale, messages, antdLocale
+      }
       this.store = initStore(props.isServer, props.initialState)
     }
 
     componentDidMount() {
       const { redirect, authStatus } = this.props;
-      console.log(redirect, authStatus)
       if(redirect && authStatus === 'callback') {
         Router.replace(redirect)
-
       }
     }
 
     render () {
-      const {locale, messages, antdLocale, now, ...props} = this.props
-
+      const { now, ...props} = this.props
+      const {locale, messages, antdLocale} = this.state
+      // console.log('locale ', locale)
       return (
         <LocaleProvider locale={antdLocale}>
-          <IntlProvider locale={locale || 'en'} messages={messages} initialNow={now}>
+          <IntlProvider locale={locale} messages={messages} initialNow={now}>
             <Provider store={this.store}>
               <IntlPage {...props} />
             </Provider>

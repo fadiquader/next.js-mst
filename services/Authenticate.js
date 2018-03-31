@@ -21,13 +21,20 @@ export default class {
     if (req) {
       if (req.session) {
         // If running on the server session data should be in the req object
-        console.log('req ', req.session)
-        // session.csrfToken = req.connection._httpMessage.locals._csrf
-        // session.expires = req.session.cookie._expires
-        // // If the user is logged in, add the user to the session object
-        // if (req.user) {
-        //   session.user = req.user
-        // }
+        session.csrfToken = req.connection._httpMessage.locals._csrf
+        session.expires = req.session.cookie._expires
+        // If the user is logged in, add the user to the session object
+        if (req.user) session.user = req.user
+        const { locale, localeDataScript, messages, antdLocale } = req
+        if(locale && localeDataScript && messages && antdLocale) {
+          session.lang = {
+            locale, localeDataScript, messages, antdLocale
+          };
+          // session.locale = locale;
+          // session.localeDataScript = localeDataScript;
+          // session.messages = messages;
+          // session.antdLocale = antdLocale;
+        }
       }
     } else {
       // If running in the browser attempt to load session from sessionStore
@@ -71,11 +78,10 @@ export default class {
       .then(data => {
         // Update session with session info
         session = data
-
         // Set a value we will use to check this client should silently
         // revalidate, using the value for revalidateAge returned by the server.
         session.expires = Date.now() + session.revalidateAge
-
+        console.log('_saveLocalStore ', session)
         // Save changes to session
         this._saveLocalStore('session', session)
 

@@ -7,8 +7,8 @@ import { parse } from 'url';
 import passport from 'passport'
 import lusca from 'lusca'
 import mongoose from 'mongoose'
+
 // project files
-import apis from './api';
 import routes from './routes';
 
 const mobxReact = require('mobx-react');
@@ -78,7 +78,7 @@ nextApp
       cookie: {
         httpOnly: true,
         secure: 'auto',
-        maxAge: 60000 * 60 * 24 * 7
+        maxAge: 60000 * 60 * 24 * 7,
       }
     }));
     // expressApp.use(cookieSession({
@@ -91,16 +91,8 @@ nextApp
     expressApp.use(passport.session());
     expressApp.use(lusca.csrf());
     expressApp.set('trust proxy', 1);
-
     expressApp.use(addLanguage);
     // expressApp.use(addUser);
-    expressApp.get('/auth/oauth/facebook', passport.authenticate('facebook'));
-    expressApp.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
-      successRedirect: `${'/auth'}/callback?action=signin&service=facebook`,
-      failureRedirect: `${'/auth'}/error?action=signin&type=oauth&service=facebook`,
-      // session: false
-    }))
-    // expressApp.use('/api', apis);
     routes(expressApp)
     expressApp.get('*', (req, res) => {
       const parsedUrl = parse(req.url, true);

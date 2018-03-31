@@ -33,6 +33,17 @@ router.get(`${pathPrefix}/session`, (req, res) => {
       session.api = req.session.api
     }
   }
+  console.log('req.locale ', req.locale)
+  const { locale, localeDataScript, messages, antdLocale } = req;
+  // console.log('locale, messages: ', locale, messages)
+  // if(locale && localeDataScript && messages && antdLocale) {
+  //   session.lang = {
+  //     locale,
+  //     localeDataScript,
+  //     messages,
+  //     antdLocale,
+  //   }
+  // }
 
   return res.json(session)
 })

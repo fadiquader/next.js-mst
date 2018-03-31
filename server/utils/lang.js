@@ -4,7 +4,9 @@ const glob = require('glob')
 const { parse } = require('url')
 const accepts = require('accepts')
 const axios = require('axios')
-const languages = glob.sync('./lang/*.json').map((f) => {
+
+
+export const languages = glob.sync('./lang/*.json').map((f) => {
     return basename(f, '.json')
 });
 
@@ -70,27 +72,11 @@ export const getMessages = (locale) => {
 };
 
 
-export const getLocales = (req) => {
-    const parsedUrl = parse(req.url, true);
-    const accept = accepts(req);
-    const lang = parsedUrl.query.lang || null;
-    let locale = lang;
-    if(lang && languages.indexOf(lang) !== -1) {
-        locale = lang;
-    }
-    // else if(req.session.lang === undefined) {
-    //     locale = accept.language(languages)
-    //     locale = locale || 'en';
-    // }
-    else {
-        // locale = req.session.lang
-        locale = 'en'
-    }
-
-    return {
-        locale,
-        localeDataScript: getLocaleDataScript(locale),
-        messages: getMessages(locale),
-        antdLocale: getAntdLocaleData(locale)
-    }
+export const getLocales = locale => {
+  return {
+    locale,
+    localeDataScript: getLocaleDataScript(locale),
+    messages: getMessages(locale),
+    antdLocale: getAntdLocaleData(locale)
+  }
 }

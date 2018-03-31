@@ -7,10 +7,9 @@ export default class DefaultDocument extends Document {
     // return await Document.getInitialProps(ctx)
     const props = await super.getInitialProps(context);
     const { html, head, errorHtml, chunks } = context.renderPage();
-    const {req: {locale, localeDataScript}} = context;
-    const styles = flush();
-    // console.log('props ', props);
+    const { req: { locale, localeDataScript } } = context
 
+    const styles = flush();
     return {
       ...props,
       locale: locale,
@@ -32,7 +31,6 @@ export default class DefaultDocument extends Document {
     const polyfill = `https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.${lang}`
     let { assetPrefix } = __NEXT_DATA__
     const buildId  = !dev ? __NEXT_DATA__.buildId : null
-
     return (
       <html lang={lang}>
       <Head>

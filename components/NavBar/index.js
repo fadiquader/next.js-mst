@@ -26,8 +26,14 @@ class NavBar extends Component {
     cookies.set('redirect_url', window.location.pathname, { path: '/' });
     await Authenticate.signout();
     authStore.signout();
-    // Router.push('/')
+    Router.push('/')
     // window.location.href = '/'
+  }
+
+  changeLang = lang => {
+    const cookies = new Cookies();
+    cookies.set('locale', lang, {})
+    if(window) window.location.reload()
   }
 
   render() {
@@ -36,10 +42,12 @@ class NavBar extends Component {
     const navigateMenu = (
       <Menu>
         <Menu.Item>
-          <a href={`//localhost:3000?lang=en`}>En</a>
+          {/*<a href={`//localhost:3000?lang=en`}>En</a>*/}
+          <a onClick={() => this.changeLang('en')}>En</a>
         </Menu.Item>
         <Menu.Item>
-          <a href={`//localhost:3000?lang=ar`}>Ar</a>
+          {/*<a href={`//localhost:3000?lang=ar`}>Ar</a>*/}
+          <a onClick={() => this.changeLang('ar')}>Ar</a>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item>
