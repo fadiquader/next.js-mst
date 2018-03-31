@@ -2,6 +2,7 @@
 import express from 'express';
 import expressSession from 'express-session';
 import cookieSession from 'cookie-session';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import { parse } from 'url';
 import passport from 'passport'
@@ -69,6 +70,8 @@ nextApp
 
     expressApp.use(bodyParser.json());
     expressApp.use(bodyParser.urlencoded({ extended: true }));
+    expressApp.use(cookieParser());
+
     expressApp.use(expressSession({
       secret: 'fadi',
       store: sessionStore,

@@ -16,15 +16,11 @@ export const addLanguage = (req, res, next) => {
   const cookieLocale = cookie.get('locale');
   const parsedUrl = parse(req.url, true);
   const accept = accepts(req).language(languages);
-  if(cookieLocale) {
-    const { locale, localeDataScript, messages, antdLocale } = getLocales(cookieLocale);
-    res.cookie('locale', locale, {})
-    req.locale = locale;
-    req.localeDataScript = localeDataScript;
-    req.messages = messages;
-    req.antdLocale = antdLocale;
-  }
-  // console.log('res.locales.locale ', res.locales)
-
+  const { locale, localeDataScript, messages, antdLocale } = getLocales(cookieLocale || accept);
+  res.cookie('locale', locale, {})
+  req.locale = locale;
+  req.localeDataScript = localeDataScript;
+  req.messages = messages;
+  req.antdLocale = antdLocale;
   return next()
 }

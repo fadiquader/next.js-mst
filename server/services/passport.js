@@ -1,7 +1,8 @@
 import passport from 'passport';
 import FacebookStrategy from 'passport-facebook';
 import GoogleStrategy from 'passport-google-oauth20';
-import LocalStrategy from'passport-local';
+import { Strategy as LocalStrategy} from'passport-local';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
 import axios from 'axios';
 import { BASE_URL, BASE_API, DEV_URL, PATH_PREFIX } from '../utils/constatns';
@@ -33,19 +34,9 @@ const facebookStrategy = new FacebookStrategy({
   ],
   proxy: true
 }, async (req, accessToken, refreshToken, profile, done) => {
-  // db.SocialAuth.findOrCreate('facebook', profile)
-  //   .then(user => {
-  //     console.log('userrr ', user)
-  //     return done(null, user)
-  //   })
-  //   .catch(err => {
-  //     return done(err, false)
-  //   })
   try {
-
     const user = await db.SocialAuth.findOrCreate('facebook', profile)
     console.log('userrr ', user)
-
     return done(null, user)
   } catch (err) {
     return done(err, false)
@@ -63,10 +54,7 @@ const googleStrategy = new GoogleStrategy({
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        console.log('profile ', profile.id)
         const user = await db.SocialAuth.findOrCreate( 'google', profile);
-        console.log('userrr ', user)
-
         return done(null, user);
       } catch (err) {
         return done(err, null);
@@ -76,67 +64,73 @@ const googleStrategy = new GoogleStrategy({
 
 passport.use(googleStrategy);
 
-const localOptions = { usernameField: 'username' };
-// const localLogin = new LocalStrategy({
-//   usernameField: 'username',
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  secretOrKey: process.env.jWT_SECRET,
+};
+// Create JWT Strategy
+const jwtStrategy = new JwtStrategy(jwtOptions, ((payload, done) => {
+  db.User.findById(payload.sub).then((user) => {
+    if (!user) return done(null, false);
+    return done(null, user);
+  }).catch(error => done(error, false));
+}));
+
+passport.use(jwtStrategy);
+
+const localSigninOptions = {
+  usernameField: 'email',
+  passwordField : 'password',
+  passReqToCallback : true
+};
+const localSignin = new LocalStrategy(localSigninOptions, async (req, email, password, done) => {
+  try {
+    const user = await db.LocalAuth.findOne({ email });
+    if (user === null) {
+      const err = new Error('Email is not registerd')
+      return done(err, false)
+    }
+    user.comparePassword(password, async (err, isMatch) => {
+      if (err || !isMatch) {
+        const err = new Error('Wrong Email or password')
+        return done(err, false)
+      }
+      const me = await db.User.findById(user.user);
+      // const token = tokenForUser(me);
+
+      return done(null, me)
+    });
+  } catch (err) {
+    console.log("error login: ", err.message)
+    return done(err, false)
+  }
+});
+
+passport.use('local', localSignin);
+
+
+// const localSignupOptions = {
+//   usernameField: 'email',
 //   passwordField : 'password',
 //   passReqToCallback : true
-// }, (req, username, password, done) => {
-//   process.nextTick(function() {
-//     axios.post(`${BASE_API}login`, { email: 'fadiqua', password: '123' })
-//       .then(res => {
-//         req.session.token = res.data.token
-//         done(null, res.data.me)
-//       })
-//       .catch(err => {
-//         return done(err, false);
-//       })
-//   })
+// };
+// const localSignup = new LocalStrategy(localSignupOptions, async (req, email, password, done) => {
+//   try {
+//     const user = await db.LocalAuth.findOne({ email });
+//     if (user !== null) {
+//       throw new Error('This Email is registered in the system');
+//     }
+//
+//
+//   } catch (err) {
+//     done(err, false)
+//   }
 // });
-
-// passport.use('local-login', localLogin);
+//
+// passport.use('local-signup', localSignup);
 
 
 // export const providers = [
-//   {
-//     providerName: 'Facebook',
-//     providerOptions: {
-//       scope: ['email', 'public_profile']
-//     },
-//     Strategy: require('passport-facebook').Strategy,
-//     strategyOptions: {
-//       clientID: process.env.FACEBOOK_ID,
-//       clientSecret: process.env.FACEBOOK_SECRET,
-//       profileFields: ['id', 'displayName', 'email', 'link']
-//     },
-//     getProfile(profile) {
-//       // Normalize profile into one with {id, name, email} keys
-//       return {
-//         id: profile.id,
-//         name: profile.displayName,
-//         email: profile._json.email
-//       }
-//     }
-//   },
-//   {
-//     providerName: 'Google',
-//     providerOptions: {
-//       scope: ['profile', 'email']
-//     },
-//     Strategy: require('passport-google-oauth').OAuth2Strategy,
-//     strategyOptions: {
-//       clientID: process.env.GOOGLE_ID,
-//       clientSecret: process.env.GOOGLE_SECRET
-//     },
-//     getProfile(profile) {
-//       // Normalize profile into one with {id, name, email} keys
-//       return {
-//         id: profile.id,
-//         name: profile.displayName,
-//         email: profile.emails[0].value
-//       }
-//     }
-//   },
 //   {
 //     providerName: 'Twitter',
 //     providerOptions: {
@@ -158,24 +152,3 @@ const localOptions = { usernameField: 'username' };
 //     }
 //   }
 // ]
-//
-// passport.use(new require('passport-facebook').Strategy({
-//   clientID: '158671718005040',
-//   clientSecret: 'd77d4d987465ffe867cebaea592f57b2',
-//   callbackURL: 'http://localhost:3000/auth/facebook/callback'
-// }, async (accessToken, refreshToken, profile, cb) => {
-//   const { id, displayName } = profile;
-//   const fbUsers = await models.FbAuth.findAll({ limit: 1, where: { fb_id: id }});
-//   if(!fbUsers.length){
-//   }
-//   cb(null, {})
-// }));
-// app.use(passport.initialize())
-// app.get('/flogin', passport.authenticate('facebook'));
-// app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-//   failureRedirect: '/login',
-//   session: false
-// }), (req, res) => {
-//   res.send('Auth was good')
-// })
-//

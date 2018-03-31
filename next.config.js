@@ -46,8 +46,8 @@ module.exports = {
     };
 
     let extractLESSPlugin = new ExtractTextPlugin({
-      filename: 'static/style-ant.'+buildId+'.css',
-      // filename: 'static/style-ant.css',
+      // filename: 'static/style-ant.'+buildId+'.css',
+      filename: 'static/style-ant.css',
       disable: dev
     });
 
@@ -112,6 +112,7 @@ module.exports = {
     // } else if(dev && !isServer) {
     //   config.module.rules[1].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
     // }
+
     config.module.rules.push({
       test: /\.less$/,
       use: lessUse
