@@ -15,12 +15,12 @@ export const AuthStore = types
     }
   }))
   .actions(self => ({
-    authenticate(data) {
-      // self.isAuthenticated = true;
-      self.username = data.user.username
-      self.firstName = data.user.firstName
-      self.lastName = data.user.lastName
-      self._id =  data.user._id.toString()
+    authenticate(user) {
+      self.isAuthenticated = true;
+      self.username = user.username
+      self.firstName = user.firstName
+      self.lastName = user.lastName
+      self._id =  user._id.toString()
     },
     signout() {
       self.isAuthenticated = false;

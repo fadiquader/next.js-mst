@@ -3,11 +3,13 @@ import FacebookStrategy from 'passport-facebook';
 import GoogleStrategy from 'passport-google-oauth20';
 import { Strategy as LocalStrategy} from'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import { tokenForUser } from '../utils';
 
-import axios from 'axios';
 import { BASE_URL, BASE_API, DEV_URL, PATH_PREFIX } from '../utils/constatns';
 import db  from '../models';
 // require('dotenv').load()
+
+
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -36,7 +38,6 @@ const facebookStrategy = new FacebookStrategy({
 }, async (req, accessToken, refreshToken, profile, done) => {
   try {
     const user = await db.SocialAuth.findOrCreate('facebook', profile)
-    console.log('userrr ', user)
     return done(null, user)
   } catch (err) {
     return done(err, false)
@@ -55,6 +56,7 @@ const googleStrategy = new GoogleStrategy({
     async (req, accessToken, refreshToken, profile, done) => {
       try {
         const user = await db.SocialAuth.findOrCreate( 'google', profile);
+        req.user = user;
         return done(null, user);
       } catch (err) {
         return done(err, null);
@@ -66,14 +68,7 @@ passport.use(googleStrategy);
 
 
 const headerExtractor = (req) => {
-  let token = null;
-  if (req) {
-    if(req.cookies && req.cookies['x-access-token']) {
-      token = req.cookies['x-access-token'];
-    } else if(req.headers['x-access-token']) {
-      token = req.headers['x-access-token']
-    }
-  }
+  let token = req.cookies && req.cookies['x-access-token'] || req.headers['x-access-token'];
   return token;
 };
 

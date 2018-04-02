@@ -1,10 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 
-export default class extends React.Component {
+class ErrorPage extends React.Component {
 
-  static async getInitialProps({req, query}) {
-    let props = await super.getInitialProps({req})
+  static getInitialProps({req, query}) {
+    console.log('eeorrrrrrrrr page ')
+    // let props = await super.getInitialProps({req})
+    let props = {}
     props.action = query.action || null
     props.type = query.type || null
     props.service = query.service || null
@@ -64,3 +66,5 @@ export default class extends React.Component {
     }
   }
 }
+
+export default ErrorPage;

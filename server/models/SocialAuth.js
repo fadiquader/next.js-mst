@@ -34,8 +34,6 @@ socialAuthSchema.statics.findOrCreate = function (network, data) {
   return new Promise(async (resolve, reject) => {
     try {
       const user = await this.findOne({ provider: network, providerId: data.id });
-      console.log('user user ', user)
-
       if (!user) {
         socialObj.providerId = data.id;
         socialObj.provider = network;

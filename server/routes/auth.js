@@ -1,20 +1,19 @@
 import express from 'express';
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
+import Cookies from 'universal-cookie';
+
 import db from '../models';
+import { tokenForUser } from '../utils';
 
 const router = express.Router();
 
 const pathPrefix = '/auth'
 
-function tokenForUser(user) {
-  const timestamp = new Date().getTime();
-  return jwt.sign({
-    sub: user.id,
-    iat: timestamp
-  }, process.env.JWT_SECRET
-  );
-}
+
+const days = 1
+const date = new Date();
+date.setTime(date.getTime()+(days*24*60*60*1000));
+const expires = date;
 
 
 router.get(`${pathPrefix}/csrf`, (req, res) => {
@@ -22,6 +21,7 @@ router.get(`${pathPrefix}/csrf`, (req, res) => {
     csrfToken: res.locals._csrf
   })
 });
+
 
 router.get(`${pathPrefix}/session`, (req, res) => {
   const sessionMaxAge = 60000 * 60 * 24 * 7
@@ -57,22 +57,41 @@ router.get(`${pathPrefix}/session`, (req, res) => {
 });
 
 router.get('/auth/oauth/facebook', passport.authenticate('facebook', {
+  session: false,
   scope: ['public_profile', 'email']
 }));
 
 router.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
+  session: false,
   successRedirect: `/auth/callback?action=signin&service=facebook`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=facebook`
 }));
 
 router.get('/auth/oauth/google', passport.authenticate('google', {
+  session: false,
   scope: ['profile', 'email']
 }));
 
 router.get('/auth/oauth/google/callback', passport.authenticate('google', {
-  successRedirect: `/auth/callback?action=signin&service=google`,
+  session: false,
+  // successRedirect: `/auth/callback?action=signin&service=google`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=google`
-}));
+}), (req, res) => {
+  const successRedirect = `/auth/callback?action=signin&service=google`;
+  const failureRedirect = `/auth/error?action=signin&type=oauth&service=google`;
+  if(req.user) {
+    req.login(req.user, { session: false }, (err) => {
+      if(err) return res.redirect(failureRedirect);
+      const token = tokenForUser(req.user)
+      res.cookie('x-access-token', token);
+      return res.redirect(successRedirect)
+    })
+  }
+  else  {
+    return res.redirect(failureRedirect)
+  }
+
+});
 
 router.post(`${pathPrefix}/signout`, (req, res) => {
   // Log user out with Passport and remove their Express session

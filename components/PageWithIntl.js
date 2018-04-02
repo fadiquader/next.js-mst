@@ -40,25 +40,26 @@ export default (Page, authStatus='no-auth-required') => {
       const isServer = !!req;
       const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null);
       const jwt = getJwt(context);
-      const response = await getCurrentUser(jwt);
-      console.log('response ', response.data)
+      const user = await getCurrentUser(jwt, context);
+      console.log('user', user)
+
       const store = initStore(isServer);
-      // const isAuthintaced = session.user
-      // if(isAuthintaced) {
-      //   store.authStore.authenticate(session)
-      // }
-      // let redirectURL = authStatus === 'auth-required' && !isAuthintaced ?
-      //   '/login' : authStatus === 'redirect-if-auth' && isAuthintaced ?
-      //     '/' : null;
-      //
-      // if(redirect === '/login') {
-      //   const redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
-      //   redirectURL = redirect + '?redirect='+redirectUrl;
-      //   cookies.set('redirect_url', redirectUrl, { path: '/' })
-      // }
-      // if(redirectURL !== null && authStatus !== 'callback') {
-      //   redirect()
-      // }
+      if(user)
+        store.authStore.authenticate(user);
+
+      let red = authStatus === 'auth-required' && !user ?
+        '/login' : authStatus === 'redirect-if-auth' && user ?
+          '/' : null;
+
+      if(red === '/login') {
+        const redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
+        red = red + '?redirect='+redirectUrl;
+        cookies.set('redirect_url', redirectUrl, { path: '/' })
+      }
+
+      if(red !== null && authStatus !== 'callback') {
+        redirect(red, context)
+      }
 
       // if(authStatus === 'callback') {
       //   redirectURL = redirect !== null ? redirect : cookies.get('redirect_url') || '/'
@@ -69,8 +70,9 @@ export default (Page, authStatus='no-auth-required') => {
       // console.log('page with intl: ', locale)
       return {
         ...props, isServer,
-        // session,
-        initialState: getSnapshot(store), redirect, authStatus,
+        initialState: getSnapshot(store),
+        redirectURL: red,
+        authStatus,
         locale,
         antdLocale,
         messages
@@ -87,9 +89,9 @@ export default (Page, authStatus='no-auth-required') => {
     }
 
     componentDidMount() {
-      const { redirect, authStatus } = this.props;
-      if(redirect && authStatus === 'callback') {
-        Router.replace(redirect)
+      const { redirectURL, authStatus } = this.props;
+      if(redirectURL && authStatus === 'callback') {
+        Router.replace(redirectURL)
       }
     }
 

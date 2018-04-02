@@ -72,24 +72,6 @@ nextApp
     expressApp.use(bodyParser.urlencoded({ extended: true }));
     expressApp.use(cookieParser());
 
-    // expressApp.use(expressSession({
-    //   secret: 'fadi',
-    //   store: sessionStore,
-    //   resave: false,
-    //   rolling: true,
-    //   saveUninitialized: false,
-    //   cookie: {
-    //     httpOnly: true,
-    //     secure: 'auto',
-    //     maxAge: 60000 * 60 * 24 * 7,
-    //   }
-    // }));
-    // expressApp.use(cookieSession({
-    //   name: 'session',
-    //   keys: ['fadi'],
-    //   // Cookie Options
-    //   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    // }));
     expressApp.use(passport.initialize());
     // expressApp.use(passport.session());
     // expressApp.use(lusca.csrf());
@@ -97,12 +79,9 @@ nextApp
     // expressApp.use(addLanguage);
     expressApp.use(authRoutes);
     expressApp.use('/api', passport.authenticate('jwt', {session: false}), routes);
-
-    // routes(expressApp)
     expressApp.get('*', (req, res) => {
-      // console.log('req cookies ', req.cookies['x-access-token'])
+
       const parsedUrl = parse(req.url, true);
-      // return handle(req, res)
       return handle(req, res, parsedUrl)
     })
     mongooseConnection
