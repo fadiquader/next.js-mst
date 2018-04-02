@@ -8,7 +8,6 @@ export const AuthStore = types
     username: types.optional(types.string, ''),
     firstName: types.optional(types.string, ''),
     lastName: types.optional(types.string, ''),
-    csrfToken: types.optional(types.string, ''),
   })
   .views(self => ({
     get store() {

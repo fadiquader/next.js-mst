@@ -1,5 +1,9 @@
-import auth from './auth';
+import express from 'express';
 
-export default (app) => {
-  app.use(auth)
-}
+import user from './user';
+
+const app = express();
+
+app.use(user);
+
+export default app;

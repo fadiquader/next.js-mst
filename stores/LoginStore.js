@@ -1,5 +1,6 @@
 import { types, getParent, flow } from "mobx-state-tree"
 import axios from 'axios';
+import { signIn, redirectIfAuthenticated } from "../lib/auth";
 
 export const LoginStore = types
   .model("PostStore", {
@@ -16,16 +17,10 @@ export const LoginStore = types
     changeStatus(status) {
       self.status = status
     },
-    tryLogin: flow(function* login({ username, password }) {
+    tryLogin: flow(function* login({ email, password }) {
       try {
-        console.log('username ', username, 'password ', password);
-        const res = yield axios.post("/api/login", {
-          username,
-          password
-        });
-        localStorage.setItem('token', res.data.token);
-        window.location.href = '/auth/callback?action=signin&service=credentials';
-        // self.store.authStore.authenticate(res.data)
+        const res = yield signIn(email, password)
+
       } catch (err) {
         console.error("Failed to login ", err)
       }

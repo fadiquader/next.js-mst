@@ -6,17 +6,13 @@ import db from '../models';
 const router = express.Router();
 
 const pathPrefix = '/auth'
-// const requireSignin = passport.authenticate('local-login',{
-//   successRedirect : '/',
-//   failureRedirect : '/login',
-// });
 
 function tokenForUser(user) {
   const timestamp = new Date().getTime();
   return jwt.sign({
     sub: user.id,
     iat: timestamp
-  }, process.env.jWT_SECRET
+  }, process.env.JWT_SECRET
   );
 }
 
@@ -89,27 +85,30 @@ router.post(`${pathPrefix}/signout`, (req, res) => {
 router.post(`${pathPrefix}/localSignin`, async (req, res) => {
   try {
     passport.authenticate('local', {session: false}, (err, user, info) => {
-      console.log(err.message);
       if (err || !user) {
-        return res.status(400).json({
-          message: err.message,
-          user   : user
+        return res.status(200).json({
+          success: false,
+          message: err && err.message || 'Error Happened',
+          user: null
         });
       }
 
-      req.login(user, {session: false}, (err) => {
+      req.login(user, { session: false }, (err) => {
         if (err) {
-          res.json({
-            message: err.message
+          return res.status(200).json({
+            success: false,
+            // message: err.message
           });
         }
         const token = tokenForUser(user);
-
         return res.json({user, token});
       });
     })(req, res);
   } catch (err) {
-
+    res.status(200).json({
+      success: false,
+      // message: err.message
+    });
   }
 
 });
@@ -147,5 +146,40 @@ router.post(`${pathPrefix}/localSignup`, async (req, res) => {
   }
 
 });
+
+
+router.post('/user_token', async (req, res) => {
+  const { email, password } = req.body.auth
+  const errorResponse = (msg) => {
+    res.status(500).json({
+      success: false,
+      message: msg || 'Invalid credentials',
+    });
+  };
+  try {
+    const user = await db.LocalAuth.findOne({ email });
+    if (user === null) {
+      errorResponse('Email is not registered')
+      return;
+    }
+    user.comparePassword(password, async (err, isMatch) => {
+      if (err || !isMatch) {
+        // const err = new Error('Wrong Email or password')
+        errorResponse('Email is not registerd')
+        return;
+      }
+      const me = await db.User.findById(user.user);
+      const token = tokenForUser(me);
+      res.status(200).json({
+        success: true,
+        me,
+        token
+      })
+    });
+  } catch (err) {
+    return errorResponse(err.message)
+  }
+})
+
 
 export default router

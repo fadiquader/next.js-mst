@@ -64,9 +64,23 @@ const googleStrategy = new GoogleStrategy({
 
 passport.use(googleStrategy);
 
+
+const headerExtractor = (req) => {
+  let token = null;
+  if (req) {
+    if(req.cookies && req.cookies['x-access-token']) {
+      token = req.cookies['x-access-token'];
+    } else if(req.headers['x-access-token']) {
+      token = req.headers['x-access-token']
+    }
+  }
+  return token;
+};
+
 const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-  secretOrKey: process.env.jWT_SECRET,
+  // jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+  jwtFromRequest: headerExtractor,
+  secretOrKey: process.env.JWT_SECRET,
 };
 // Create JWT Strategy
 const jwtStrategy = new JwtStrategy(jwtOptions, ((payload, done) => {

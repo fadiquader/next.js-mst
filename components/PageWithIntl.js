@@ -7,6 +7,9 @@ import { Provider } from "mobx-react"
 import { getSnapshot } from "mobx-state-tree"
 import { initStore } from '../stores';
 import Authenticate from '../services/Authenticate';
+import { getCurrentUser } from "../services/userApi";
+import { redirectIfNotAuthenticated, getJwt } from "../lib/auth";
+import redirect from "../lib/redirect";
 
 // Register React Intl's locale data for the user's locale in the browser. This
 // locale data was added to the page by `pages/_document.js`. This only happens
@@ -35,47 +38,38 @@ export default (Page, authStatus='no-auth-required') => {
       // In the browser, use the same values that the server serialized.
       const { req, res, pathname, query } = context;
       const isServer = !!req;
-
-      let session = await Authenticate.init({
-        req: req,
-      });
-
       const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null);
-      const loc = cookies.get('locale')
-      if(!loc) cookies.set('locale', 'en', {})
+      const jwt = getJwt(context);
+      const response = await getCurrentUser(jwt);
+      console.log('response ', response.data)
       const store = initStore(isServer);
-      const isAuthintaced = session.user
-      if(isAuthintaced) {
-        store.authStore.authenticate(session)
-      }
-      // console.log('session.token:  ', session.token)
-      let redirect = authStatus === 'auth-required' && !isAuthintaced ?
-        '/login' : authStatus === 'redirect-if-auth' && isAuthintaced ?
-          '/' : null;
+      // const isAuthintaced = session.user
+      // if(isAuthintaced) {
+      //   store.authStore.authenticate(session)
+      // }
+      // let redirectURL = authStatus === 'auth-required' && !isAuthintaced ?
+      //   '/login' : authStatus === 'redirect-if-auth' && isAuthintaced ?
+      //     '/' : null;
+      //
+      // if(redirect === '/login') {
+      //   const redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
+      //   redirectURL = redirect + '?redirect='+redirectUrl;
+      //   cookies.set('redirect_url', redirectUrl, { path: '/' })
+      // }
+      // if(redirectURL !== null && authStatus !== 'callback') {
+      //   redirect()
+      // }
 
-      if(redirect === '/login') {
-        const redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
-        redirect = redirect + '?redirect='+redirectUrl;
-        cookies.set('redirect_url', redirectUrl, { path: '/' })
-      }
-      if(redirect !== null && authStatus !== 'callback') {
-        if (isServer && res) {
-          res.writeHead(302, { Location: redirect })
-          res.end()
-        } else {
-          Router.push(redirect)
-        }
-      }
-
-      if(authStatus === 'callback') {
-        redirect = redirect !== null ? redirect : cookies.get('redirect_url') || '/'
-      }
+      // if(authStatus === 'callback') {
+      //   redirectURL = redirect !== null ? redirect : cookies.get('redirect_url') || '/'
+      // }
       const { locale, messages, antdLocale } = req || window.__NEXT_DATA__.props
 
       // const { locale, antdLocale, messages } = session.lang
       // console.log('page with intl: ', locale)
       return {
-        ...props, isServer, session,
+        ...props, isServer,
+        // session,
         initialState: getSnapshot(store), redirect, authStatus,
         locale,
         antdLocale,

@@ -18,7 +18,7 @@ class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: '',
+      email: '',
       password: ''
     };
     this.onInputChange = this._onInputChange.bind(this);
@@ -53,9 +53,9 @@ class Login extends React.Component {
           </div>
           <Row>
             <Col span={12}>
-              <Form  method="post" action="/api/login" onSubmit={this.handleLogin}>
+              <Form onSubmit={this.handleLogin}>
                 <FormItem>
-                  <Input name="username" onChange={this.onInputChange} />
+                  <Input name="email" onChange={this.onInputChange} />
                 </FormItem>
                 <FormItem>
                   <Input name="password" onChange={this.onInputChange} />
