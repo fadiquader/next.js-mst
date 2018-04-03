@@ -32,4 +32,4 @@ class Protected extends Component {
   }
 }
 
-export default pageWithIntl(Protected, 'auth-required')
+export default pageWithIntl(Protected)

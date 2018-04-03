@@ -37,7 +37,8 @@ const facebookStrategy = new FacebookStrategy({
   proxy: true
 }, async (req, accessToken, refreshToken, profile, done) => {
   try {
-    const user = await db.SocialAuth.findOrCreate('facebook', profile)
+    const user = await db.SocialAuth.findOrCreate('facebook', profile);
+    req.user = user;
     return done(null, user)
   } catch (err) {
     return done(err, false)

@@ -73,4 +73,4 @@ class Login extends React.Component {
 }
 
 
-export default pageWithIntl(Login, 'redirect-if-auth')
+export default pageWithIntl(Login)

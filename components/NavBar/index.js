@@ -20,9 +20,7 @@ class NavBar extends Component {
   async _handleSignoutSubmit(event) {
     event.preventDefault();
     const { authStore } = this.props.store;
-    // Save current URL so user is redirected back here after signing out
     removeCookie('x-access-token');
-    setCookie('redirect_url', window.location.pathname, { path: '/' });
     authStore.signout();
     Router.push('/')
     // window.location.href = '/'

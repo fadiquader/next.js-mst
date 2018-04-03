@@ -65,7 +65,21 @@ router.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
   session: false,
   successRedirect: `/auth/callback?action=signin&service=facebook`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=facebook`
-}));
+}),(req, res) => {
+  const successRedirect = `/auth/callback?action=signin&service=facebook`;
+  const failureRedirect = `/auth/error?action=signin&type=oauth&service=facebook`;
+  if(req.user) {
+    req.login(req.user, { session: false }, (err) => {
+      if(err) return res.redirect(failureRedirect);
+      const token = tokenForUser(req.user)
+      res.cookie('x-access-token', token);
+      return res.redirect(successRedirect)
+    })
+  }
+  else  {
+    return res.redirect(failureRedirect)
+  }
+});
 
 router.get('/auth/oauth/google', passport.authenticate('google', {
   session: false,
