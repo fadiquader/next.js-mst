@@ -4,9 +4,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { Button, Layout, Dropdown, Menu, Icon } from 'antd';
 import { inject, observer } from 'mobx-react';
-import Cookies from 'universal-cookie'
+import { setCookie, removeCookie } from 'lib/session'
 
-import Authenticate from '../../services/Authenticate';
 import styles from './index.scss';
 
 const { Header } = Layout;
@@ -22,17 +21,15 @@ class NavBar extends Component {
     event.preventDefault();
     const { authStore } = this.props.store;
     // Save current URL so user is redirected back here after signing out
-    const cookies = new Cookies();
-    cookies.set('redirect_url', window.location.pathname, { path: '/' });
-    await Authenticate.signout();
+    removeCookie('x-access-token');
+    setCookie('redirect_url', window.location.pathname, { path: '/' });
     authStore.signout();
     Router.push('/')
     // window.location.href = '/'
   }
 
   changeLang = lang => {
-    const cookies = new Cookies();
-    cookies.set('locale', lang, {})
+    setCookie('locale', lang, {})
     if(window) window.location.reload()
   }
 

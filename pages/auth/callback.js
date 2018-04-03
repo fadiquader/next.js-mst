@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import Router from 'next/router'
 import Cookies from 'universal-cookie'
-import { removeCookie } from 'lib/session'
+import { setCookie } from 'lib/session'
 import redirect from 'lib/redirect'
 
 import pageWithIntl from '../../components/PageWithIntl';
@@ -32,7 +32,7 @@ class Callback extends React.Component {
   }
 
   componentDidMount() {
-    removeCookie('redirect_url')
+    setCookie('redirect_url', window.location.pathname, { path: '/' })
     redirect(this.props.redirectTo )
   }
 

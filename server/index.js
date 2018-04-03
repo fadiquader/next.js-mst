@@ -76,27 +76,27 @@ nextApp
     // expressApp.use(passport.session());
     // expressApp.use(lusca.csrf());
     expressApp.set('trust proxy', 1);
-    // expressApp.use(addLanguage);
     expressApp.use(authRoutes);
     expressApp.use('/api', passport.authenticate('jwt', {session: false}), routes);
+    expressApp.use(addLanguage);
+
     expressApp.get('*', (req, res) => {
 
       const parsedUrl = parse(req.url, true);
       return handle(req, res, parsedUrl)
     })
-    mongooseConnection
-      .then(
-        () => {
-          console.log('Mongoose connected to ');
-          expressApp.listen(process.env.PORT, err => {
-            if (err)  throw err
-            console.log('> Ready on http://localhost:' + process.env.PORT + ' [' + process.env.NODE_ENV + ']')
-          })
-        },
-        (err) => {
-          console.log(`Mongoose connection error: ${err}`);
-        }
-      )
+    mongooseConnection.then(
+      () => {
+        console.log('Mongoose connected to ');
+        expressApp.listen(process.env.PORT, err => {
+          if (err)  throw err
+          console.log('> Ready on http://localhost:' + process.env.PORT + ' [' + process.env.NODE_ENV + ']')
+        })
+      },
+      (err) => {
+        console.log(`Mongoose connection error: ${err}`);
+      }
+    )
   })
   .catch(err => {
     console.log('An error occurred, unable to start the server')
