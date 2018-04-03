@@ -9,6 +9,7 @@ import { initStore } from '../stores';
 import Authenticate from '../services/Authenticate';
 import { getCurrentUser } from "../services/userApi";
 import { redirectIfNotAuthenticated, getJwt } from "../lib/auth";
+
 import redirect from "../lib/redirect";
 
 // Register React Intl's locale data for the user's locale in the browser. This
@@ -39,6 +40,8 @@ export default (Page, authStatus='no-auth-required') => {
       const { req, res, pathname, query } = context;
       const isServer = !!req;
       const cookies = new Cookies((req && req.headers.cookie) ? req.headers.cookie : null);
+      if(!cookies.get('locale'))
+        cookies.set('locale', 'en', { path: '/' })
       const jwt = getJwt(context);
       const user = await getCurrentUser(jwt, context);
       console.log('user', user)
@@ -97,7 +100,7 @@ export default (Page, authStatus='no-auth-required') => {
 
     render () {
       const { now, ...props} = this.props
-      const {locale, messages, antdLocale} = this.state
+      const {locale, messages, antdLocale} = this.props
       // console.log('locale ', locale)
       return (
         <LocaleProvider locale={antdLocale}>
