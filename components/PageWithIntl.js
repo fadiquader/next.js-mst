@@ -45,17 +45,18 @@ export default (Page) => {
       if(!cookies.get('locale')) cookies.set('locale', 'en', { path: '/' });
       const jwt = getJwt(context);
       const user = await getCurrentUser(jwt, context);
-      console.log('user', user)
+      // console.log('user', user)
       const store = initStore(isServer);
       if(user) store.authStore.authenticate(user);
       const path = isServer ? req.path : pathname;
       let red;
-      // console.log('user', user, 'path ', path, redirectIfAuth.includes(path))
+      console.log('path ', path,)
       if(!openRoutes.includes(path)) {
         red = cookies.get('redirect_url') || '/'
        if(callbackRoutes.includes(path)) {
-          red = cookies.get('redirect_url') || '/'
-          redirect(red, context)
+         console.log('callbackRoutes.includes(path) ', callbackRoutes.includes(path))
+         red = cookies.get('redirect_url') || '/'
+         redirect(red, context)
         }
         else if(!user && !redirectIfAuth.includes(path)) {
           let redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;

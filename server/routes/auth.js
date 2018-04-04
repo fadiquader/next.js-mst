@@ -18,7 +18,7 @@ router.get('/oauth/facebook', passport.authenticate('facebook', {
 
 router.get('/oauth/facebook/callback', passport.authenticate('facebook', {
   session: false,
-  successRedirect: `/auth/callback?action=signin&service=facebook`,
+  // successRedirect: `/auth/callback?action=signin&service=facebook`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=facebook`
 }),(req, res) => {
   const successRedirect = `/auth/callback?action=signin&service=facebook`;
@@ -131,6 +131,7 @@ router.post('/localSignup', async (req, res) => {
 router.get('/signout', (req, res) => {
   req.logout();
   res.clearCookie('x-access-token')
+  res.clearCookie('redirect_url')
   return res.redirect(`/auth/callback?action=signout`)
 });
 
