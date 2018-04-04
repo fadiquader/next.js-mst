@@ -9,8 +9,6 @@ import { BASE_URL, BASE_API, DEV_URL, PATH_PREFIX } from '../utils/constatns';
 import db  from '../models';
 // require('dotenv').load()
 
-
-
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });

@@ -13,3 +13,7 @@ export const authenticate = async (email, password) => {
       : "Unknown error. Please try again";
   }
 };
+
+export const signout =  () => {
+  return post('/auth/signout');
+};

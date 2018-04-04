@@ -25,7 +25,8 @@ if (typeof window !== 'undefined' && window.ReactIntlLocaleData) {
 
 
 const openRoutes = ['/'];
-const redirectIfAuth = ['/login', '/auth/callback'];
+const callbackRoutes = ['/auth/callback'];
+const redirectIfAuth = ['/login',];
 
 export default (Page) => {
   const IntlPage = injectIntl(Page)
@@ -49,16 +50,22 @@ export default (Page) => {
       if(user) store.authStore.authenticate(user);
       const path = isServer ? req.path : pathname;
       let red;
+      // console.log('user', user, 'path ', path, redirectIfAuth.includes(path))
       if(!openRoutes.includes(path)) {
-        if(!user && !redirectIfAuth.includes(path)) {
+        red = cookies.get('redirect_url') || '/'
+       if(callbackRoutes.includes(path)) {
+          red = cookies.get('redirect_url') || '/'
+          redirect(red, context)
+        }
+        else if(!user && !redirectIfAuth.includes(path)) {
           let redirectUrl = isServer ? query.redirect ? query.redirect : req.path : pathname;
           redirectUrl = redirectUrl.replace( /^[a-zA-Z]{3,5}\:\/{2}[a-zA-Z0-9_.:-]+\//, '')
           red = '/login?redirect='+redirectUrl;
           cookies.set('redirect_url', redirectUrl, { path: '/' })
           console.log('redirectUrl ', redirectUrl, )
           redirect(red, context)
-        } else if(user && redirectIfAuth.includes(path)) {
-          red = cookies.get('redirect_url') || '/'
+        }
+        else if(user && redirectIfAuth.includes(path)) {
           cookies.set('redirect_url', '/', { path: '/' })
           redirect(red, context)
         }

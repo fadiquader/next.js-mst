@@ -41,15 +41,6 @@ const nextApp = next({
 
 const handle = nextApp.getRequestHandler()
 
-const MongoStore = require('connect-mongo')(expressSession);
-
-const sessionStore = new MongoStore({
-  url: process.env.MONGO_URI,
-  autoRemove: 'interval',
-  autoRemoveInterval: 10, // Removes expired sessions every 10 minutes
-  collection: 'sessions',
-  stringify: false
-});
 
 const mongooseConnection = mongoose.connect(process.env.MONGO_URI, {
   autoIndex: false, // Don't build indexes
@@ -76,7 +67,7 @@ nextApp
     // expressApp.use(passport.session());
     // expressApp.use(lusca.csrf());
     expressApp.set('trust proxy', 1);
-    expressApp.use(authRoutes);
+    expressApp.use('/auth', authRoutes);
     expressApp.use('/api', passport.authenticate('jwt', {session: false}), routes);
     expressApp.use(addLanguage);
 

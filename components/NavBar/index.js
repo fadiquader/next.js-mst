@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button, Layout, Dropdown, Menu, Icon } from 'antd';
 import { inject, observer } from 'mobx-react';
 import { setCookie, removeCookie } from 'lib/session'
+import { signout } from 'services/authApi';
 
 import styles from './index.scss';
 
@@ -20,10 +21,15 @@ class NavBar extends Component {
   async _handleSignoutSubmit(event) {
     event.preventDefault();
     const { authStore } = this.props.store;
-    removeCookie('x-access-token');
-    authStore.signout();
-    Router.push('/')
-    // window.location.href = '/'
+    // removeCookie('x-access-token');
+    // authStore.signout();
+    try {
+      // const res = await signout()
+
+    } catch (err) {
+      console.log('err ', err)
+    }
+    window.location.replace('/auth/signout')
   }
 
   changeLang = lang => {

@@ -1,67 +1,22 @@
 import express from 'express';
 import passport from 'passport';
-import Cookies from 'universal-cookie';
-
+// project files
 import db from '../models';
 import { tokenForUser } from '../utils';
 
 const router = express.Router();
-
-const pathPrefix = '/auth'
-
 
 const days = 1
 const date = new Date();
 date.setTime(date.getTime()+(days*24*60*60*1000));
 const expires = date;
 
-
-router.get(`${pathPrefix}/csrf`, (req, res) => {
-  return res.json({
-    csrfToken: res.locals._csrf
-  })
-});
-
-
-router.get(`${pathPrefix}/session`, (req, res) => {
-  const sessionMaxAge = 60000 * 60 * 24 * 7
-  const  sessionRevalidateAge = 60000;
-  let session = {
-    maxAge: sessionMaxAge,
-    revalidateAge: sessionRevalidateAge,
-    csrfToken: res.locals._csrf
-  }
-
-  // Add user object to session if logged in
-  if (req.user) {
-    // If logged in, export the API access token details to the client
-    // Note: This token is valid for the duration of this session only.
-    session.user = req.user
-    if (req.session && req.session.api) {
-      session.api = req.session.api
-    }
-  }
-  console.log('req.locale ', req.locale)
-  const { locale, localeDataScript, messages, antdLocale } = req;
-  // console.log('locale, messages: ', locale, messages)
-  // if(locale && localeDataScript && messages && antdLocale) {
-  //   session.lang = {
-  //     locale,
-  //     localeDataScript,
-  //     messages,
-  //     antdLocale,
-  //   }
-  // }
-
-  return res.json(session)
-});
-
-router.get('/auth/oauth/facebook', passport.authenticate('facebook', {
+router.get('/oauth/facebook', passport.authenticate('facebook', {
   session: false,
   scope: ['public_profile', 'email']
 }));
 
-router.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
+router.get('/oauth/facebook/callback', passport.authenticate('facebook', {
   session: false,
   successRedirect: `/auth/callback?action=signin&service=facebook`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=facebook`
@@ -81,12 +36,12 @@ router.get('/auth/oauth/facebook/callback', passport.authenticate('facebook', {
   }
 });
 
-router.get('/auth/oauth/google', passport.authenticate('google', {
+router.get('/oauth/google', passport.authenticate('google', {
   session: false,
   scope: ['profile', 'email']
 }));
 
-router.get('/auth/oauth/google/callback', passport.authenticate('google', {
+router.get('/oauth/google/callback', passport.authenticate('google', {
   session: false,
   // successRedirect: `/auth/callback?action=signin&service=google`,
   failureRedirect: `/auth/error?action=signin&type=oauth&service=google`
@@ -107,15 +62,8 @@ router.get('/auth/oauth/google/callback', passport.authenticate('google', {
 
 });
 
-router.post(`${pathPrefix}/signout`, (req, res) => {
-  // Log user out with Passport and remove their Express session
-  req.logout()
-  req.session.destroy(() => {
-    return res.redirect(`${pathPrefix}/callback?action=signout`)
-  })
-});
 
-router.post(`${pathPrefix}/localSignin`, async (req, res) => {
+router.post(`/localSignin`, async (req, res) => {
   try {
     passport.authenticate('local', {session: false}, (err, user, info) => {
       if (err || !user) {
@@ -146,7 +94,7 @@ router.post(`${pathPrefix}/localSignin`, async (req, res) => {
 
 });
 
-router.post(`${pathPrefix}/localSignup`, async (req, res) => {
+router.post('/localSignup', async (req, res) => {
   const {
     firstName, lastName, email, password,
   } = req.body;
@@ -180,39 +128,12 @@ router.post(`${pathPrefix}/localSignup`, async (req, res) => {
 
 });
 
+router.get('/signout', (req, res) => {
+  req.logout();
+  res.clearCookie('x-access-token')
+  return res.redirect(`/auth/callback?action=signout`)
+});
 
-router.post('/user_token', async (req, res) => {
-  const { email, password } = req.body.auth
-  const errorResponse = (msg) => {
-    res.status(500).json({
-      success: false,
-      message: msg || 'Invalid credentials',
-    });
-  };
-  try {
-    const user = await db.LocalAuth.findOne({ email });
-    if (user === null) {
-      errorResponse('Email is not registered')
-      return;
-    }
-    user.comparePassword(password, async (err, isMatch) => {
-      if (err || !isMatch) {
-        // const err = new Error('Wrong Email or password')
-        errorResponse('Email is not registerd')
-        return;
-      }
-      const me = await db.User.findById(user.user);
-      const token = tokenForUser(me);
-      res.status(200).json({
-        success: true,
-        me,
-        token
-      })
-    });
-  } catch (err) {
-    return errorResponse(err.message)
-  }
-})
 
 
 export default router

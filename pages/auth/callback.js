@@ -31,11 +31,6 @@ class Callback extends React.Component {
     }
   }
 
-  // componentDidMount() {
-  //   redirect(this.props.redirectTo )
-  //   setCookie('redirect_url', '/', { path: '/' })
-  // }
-
   render() {
     // Provide a link for clients without JavaScript as a fallback.
     return (
@@ -53,5 +48,4 @@ class Callback extends React.Component {
   }
 }
 
-export default pageWithIntl(Callback, 'callback')
-// export default Callback
+export default pageWithIntl(Callback)
