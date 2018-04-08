@@ -20,6 +20,7 @@
     "dotenv": "^5.0.0",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "extracted-loader": "1.0.4",
     "gm": "^1.23.1",
     "image-downloader": "^3.3.0",
     "intl": "^1.2.5",

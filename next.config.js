@@ -18,7 +18,7 @@ module.exports = {
         modules: false,
         minimize: !dev,
         sourceMap: dev,
-        importLoaders: 1
+        importLoaders: 3
       }
     }
 
@@ -63,15 +63,9 @@ module.exports = {
     });
 
     config.plugins.push(extractLESSPlugin)
-    // config.plugins.push(extractSCSSPlugin)
+
     config.plugins.push(extractCSSPlugin)
-    //
-    // if (!extractCSSPlugin.options.disable) {
-    //   extractCSSPlugin.options.disable = dev
-    // }
-    // if (!extractLESSPlugin.options.disable) {
-    //   extractLESSPlugin.options.disable = dev
-    // }
+
 
     if (isServer && cssLoader.options.modules) {
       lessUse = [cssLoader, postcssLoader, lessLoader].filter(Boolean)
@@ -80,6 +74,10 @@ module.exports = {
       lessUse = ['ignore-loader']
       scssUse = ['ignore-loader']
     } else {
+      // lessUse = [dev && 'extracted-loader'].concat(extractLESSPlugin.extract({
+      //   use: [cssLoader, postcssLoader, lessLoader].filter(Boolean),
+      // }))
+
       lessUse = extractLESSPlugin.extract({
         use: [cssLoader, postcssLoader, lessLoader].filter(Boolean),
         // Use style-loader in development
@@ -91,26 +89,19 @@ module.exports = {
           }
         }
       });
-      scssUse = extractSCSSPlugin.extract({
-        use: [cssLoader, postcssLoader, scssLoader].filter(Boolean),
-        // Use style-loader in development
-        fallback: {
-          loader: 'style-loader',
-          options: {
-            sourceMap: dev,
-            importLoaders: 1
-          }
-        }
-      });
     }
 
-    // if(!dev && isServer) {
-    //   config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd' }])
+    if(!dev && isServer) {
+      config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd', style: true }])
+    } else if(dev && !isServer) {
+      config.module.rules[1].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
+    }
+
+    // if (!extractCSSPlugin.options.disable) {
+    //   extractCSSPlugin.options.disable = dev
     // }
-    // if(!dev && !isServer) {
-    //   config.module.rules[0].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
-    // } else if(dev && !isServer) {
-    //   config.module.rules[1].use.options.plugins.push(['import', { libraryName: 'antd', style: !isServer }])
+    // if (!extractLESSPlugin.options.disable) {
+    //   extractLESSPlugin.options.disable = dev
     // }
 
     config.module.rules.push({
@@ -172,7 +163,12 @@ module.exports = {
     //             openAnalyzer: false
     //         })
     //     );
-
+    config.node = {
+      fs: "empty",
+      net: "empty",
+      tls: "empty",
+      "child_process": "empty"
+    }
     return config
   }
 }

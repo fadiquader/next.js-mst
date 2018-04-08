@@ -14,17 +14,12 @@
       "module-resolver",
       { "root": ["./"] }
     ],
-    ["import", {
-      "libraryName": "antd",
-      "libraryDirectory": "lib",
-      "style": false
-    }],
+
     "transform-decorators-legacy"
   ],
   "env": {
     "development": {
       "plugins": [
-
         "react-intl"
       ]
     },
